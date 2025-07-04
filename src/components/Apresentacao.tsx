@@ -1,4 +1,4 @@
-import { Megaphone, Lightbulb, CheckCircle, Video, Image } from 'lucide-react' // Adicione Video e Image aqui
+import { Megaphone, Lightbulb, CheckCircle, Video, Image, Star } from 'lucide-react' // Adicione Video e Image aqui
 
 export default function Apresentacao() {
   return (
@@ -10,49 +10,51 @@ export default function Apresentacao() {
         </p>
       </div>
 
-      {/* Seção: Estruturando sua Fala (Mantida com cores originais) */}
+      {/* Seção: Apresente seu trabalho (Mantida com cores originais) */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
           <Megaphone className="h-6 w-6 text-blue-500 mr-2" />
-          Estruturando sua Fala
+          Apresente o seu trabalho no Congresso 
         </h2>
         <div className="space-y-4 text-gray-700">
           <p>
-            Ao apresentar seu resumo, seja ele simples ou expandido, é crucial organizar suas ideias para transmitir a mensagem principal de forma eficaz. Pense na sua apresentação como uma versão verbal do seu resumo.
+            Mediante a aprovação do trabalho é o momento de preparar a apresentação do seu trabalho para o congresso.
           </p>
           <ul className="list-disc list-inside space-y-2">
             <li>
-              <strong>Introdução:</strong> Comece apresentando o tema e o objetivo do seu trabalho. Cative a atenção do público.
+              No ato da submissão, você escolheu a modalidade de apresentação: e-banner ou vídeo;
             </li>
             <li>
-              <strong>Metodologia (se aplicável):</strong> Descreva brevemente como a pesquisa foi conduzida.
+              Com base nessa escolha, você deve produzir sua apresentação seguindo o modelo oficial do evento;
             </li>
             <li>
-              <strong>Resultados Principais:</strong> Foco nos achados mais relevantes e significativos. Use dados e exemplos claros.
-            </li>
-            <li>
-              <strong>Conclusão e Implicações:</strong> Resuma suas descobertas e discuta a importância do seu trabalho, suas limitações e futuras direções.
+              Após finalizá-la, envie o material diretamente pela sua área de inscrito na plataforma.
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Seção: Dicas para uma Apresentação de Sucesso (Mantida com cores originais) */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-          <Lightbulb className="h-6 w-6 text-yellow-500 mr-2" />
-          Dicas para uma Apresentação de Sucesso
+          <Star className="h-6 w-6 text-blue-500 mr-2" />
+          Divulgação científica e visibilidade da pesquisa 
         </h2>
         <div className="space-y-4 text-gray-700">
+          <p>
+            As apresentações ficarão disponíveis durante todos os dias do evento, e poderão ser acessadas por todos os inscritos.
+          </p>
+          <p>
+            Ao apresentar seu trabalho no congresso, você terá a oportunidade de:
+          </p>
           <ul className="list-disc list-inside space-y-2">
             <li>
-              <strong>Pratique:</strong> Ensaiar a apresentação várias vezes ajuda a gerenciar o tempo e a fluidez da fala.
+              Compartilhar sua pesquisa com um público nacional;
             </li>
             <li>
-              <strong>Recursos Visuais:</strong> Utilize slides claros e concisos. Evite excesso de texto; use imagens, gráficos e tabelas para ilustrar seus pontos.
+              Ampliar sua experiência acadêmica e desenvolver habilidades em comunicação científica;
             </li>
             <li>
-              <strong>Gerenciamento do Tempo:</strong> Respeite o tempo alocado para sua apresentação. Treine para não exceder ou ficar muito aquém.
+              Concorrer às menções honrosas, título de reconhecimento aos melhores trabalhos.
             </li>
           </ul>
         </div>
@@ -105,6 +107,27 @@ export default function Apresentacao() {
             </li>
             <li>
               Após recebermos o e-banner, o material será analisado e a aprovação ou reprovação dele poderá ser acompanhada na sua área inscrito no site do evento.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Seção: Dicas para uma Apresentação de Sucesso (Mantida com cores originais) */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+          <Lightbulb className="h-6 w-6 text-yellow-500 mr-2" />
+          Dicas para uma Apresentação de Sucesso
+        </h2>
+        <div className="space-y-4 text-gray-700">
+          <ul className="list-disc list-inside space-y-2">
+            <li>
+              <strong>Pratique:</strong> Ensaiar a apresentação várias vezes ajuda a gerenciar o tempo e a fluidez da fala.
+            </li>
+            <li>
+              <strong>Recursos Visuais:</strong> Utilize slides claros e concisos. Evite excesso de texto; use imagens, gráficos e tabelas para ilustrar seus pontos.
+            </li>
+            <li>
+              <strong>Gerenciamento do Tempo:</strong> Respeite o tempo alocado para sua apresentação. Treine para não exceder ou ficar muito aquém.
             </li>
           </ul>
         </div>
