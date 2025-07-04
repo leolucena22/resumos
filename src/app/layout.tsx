@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Guia de Resumos Científicos',
-  description: 'Aprenda a estruturar resumos simples e expandidos para eventos acadêmicos',
+  description: 'Aprenda a estruturar resumos simples e expandidos para eventos científicos.',
 }
 
 import { ReactNode } from 'react';
