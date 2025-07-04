@@ -73,7 +73,7 @@ export default function ResumoSimples() {
               <li><strong>Objetivos:</strong> Propósito claro do estudo</li>
               <li><strong>Metodologia:</strong> Procedimentos adotados</li>
               <li><strong>Resultados:</strong> Principais achados</li>
-              <li><strong>Conclusão:</strong> Considerações finais</li>
+              <li><strong>Conclusão:</strong> Pontos principais de fechamento da pesquisa</li>
             </ol>
           </div>
 
@@ -83,7 +83,7 @@ export default function ResumoSimples() {
               <li><strong>Introdução:</strong> Contextualização</li>
               <li><strong>Objetivo:</strong> Propósito do relato</li>
               <li><strong>Relato de caso/experiência:</strong> Descrição detalhada</li>
-              <li><strong>Conclusão:</strong> Considerações finais</li>
+              <li><strong>Conclusão:</strong> Pontos principais de fechamento da pesquisa</li>
             </ol>
           </div>
         </div>
