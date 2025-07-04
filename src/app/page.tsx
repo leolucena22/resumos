@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { BookOpen, FileText, Users, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import Header from '@/components/Header'
 import Navigation from '@/components/Navigation'
-import ResumoSimples from '@/components/ResumoSimples' // Ajustado para caminho relativo
-import ResumoExpandido from '@/components/ResumoExpandido' // Ajustado para caminho relativo
+import ResumoSimples from '@/components/ResumoSimples'
+import ResumoExpandido from '@/components/ResumoExpandido'
 import Apresentacao from '@/components/Apresentacao'
 import Quiz from '@/components/Quiz'
 import Footer from '@/components/Footer'
 import './globals.css'
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState('inicio')
 
@@ -29,11 +30,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <Navigation activeSection={activeSection} setActiveSection={setActiveSection} />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {renderContent()}
       </main>
       
@@ -48,7 +49,7 @@ function InicioSection() {
       {/* Hero Section */}
       <div className="text-center py-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Guia prático para organização e estruturação  de resumos científicos 
+          Guia prático para organização e estruturação de resumos científicos 
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Aprenda a estruturar resumos simples e expandidos seguindo as diretrizes de eventos organizados pela SOBREC
