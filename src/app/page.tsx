@@ -1,103 +1,141 @@
-import Image from "next/image";
+'use client'
 
+import { useState } from 'react'
+import { BookOpen, FileText, Users, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import Header from '@/components/Header'
+import Navigation from '@/components/Navigation'
+import ResumoSimples from '@/components/ResumoSimples' // Ajustado para caminho relativo
+import ResumoExpandido from '@/components/ResumoExpandido' // Ajustado para caminho relativo
+import Apresentacao from '@/components/Apresentacao'
+import Quiz from '@/components/Quiz'
+import Footer from '@/components/Footer'
+import './globals.css'
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [activeSection, setActiveSection] = useState('inicio')
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'resumo-simples':
+        return <ResumoSimples />
+      case 'resumo-expandido':
+        return <ResumoExpandido />
+      case 'apresentacao':
+        return <Apresentacao />
+      case 'quiz':
+        return <Quiz />
+      default:
+        return <InicioSection />
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <Navigation activeSection={activeSection} setActiveSection={setActiveSection} />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderContent()}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      
+      <Footer />
     </div>
-  );
+  )
+}
+
+function InicioSection() {
+  return (
+    <div className="space-y-12">
+      {/* Hero Section */}
+      <div className="text-center py-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Guia Completo para Resumos Acadêmicos
+        </h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Aprenda a estruturar resumos simples e expandidos seguindo as diretrizes do evento
+        </p>
+      </div>
+
+      {/* Cards de Tipos de Resumo */}
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
+          <div className="flex items-center mb-4">
+            <FileText className="h-8 w-8 text-blue-500 mr-3" />
+            <h2 className="text-2xl font-bold text-gray-900">Resumo Simples</h2>
+          </div>
+          <p className="text-gray-600 mb-4">
+            Formato mais conciso com 250-350 palavras, ideal para apresentações diretas dos principais achados.
+          </p>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              Estrutura obrigatória definida
+            </li>
+            <li className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              Sem referências bibliográficas
+            </li>
+            <li className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              Submissão via formulário online
+            </li>
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
+          <div className="flex items-center mb-4">
+            <BookOpen className="h-8 w-8 text-green-500 mr-3" />
+            <h2 className="text-2xl font-bold text-gray-900">Resumo Expandido</h2>
+          </div>
+          <p className="text-gray-600 mb-4">
+            Formato mais detalhado com 4-7 páginas, permitindo maior profundidade na discussão.
+          </p>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              Inclui referências bibliográficas
+            </li>
+            <li className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              Permite tabelas e figuras
+            </li>
+            <li className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              Formato PDF obrigatório
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Regras Gerais */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+          <Info className="h-6 w-6 text-blue-500 mr-2" />
+          Regras Gerais de Submissão
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="bg-blue-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <FileText className="h-8 w-8 text-blue-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">Templates Obrigatórios</h3>
+            <p className="text-sm text-gray-600">Utilize os modelos fornecidos para cada categoria</p>
+          </div>
+          <div className="text-center">
+            <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Users className="h-8 w-8 text-green-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">Duas Versões</h3>
+            <p className="text-sm text-gray-600">Com e sem identificação dos autores (resumo expandido)</p>
+          </div>
+          <div className="text-center">
+            <div className="bg-yellow-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <AlertCircle className="h-8 w-8 text-yellow-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">Acompanhamento</h3>
+            <p className="text-sm text-gray-600">Monitore o status na aba &quot;Meus Trabalhos&quot;</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
