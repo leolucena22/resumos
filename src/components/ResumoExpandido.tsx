@@ -78,7 +78,7 @@ export default function ResumoExpandido() {
             <h3 className="text-lg font-semibold text-gray-900">Espaçamento</h3>
             <ul className="space-y-2 text-gray-700">
               <li>• Entre linhas: 1,0</li>
-              <li>• Fonte: Times New Roman ou Arial</li>
+              <li>• Fonte: Times New Roman</li>
               <li>• Tamanho: 12 pt</li>
             </ul>
           </div>

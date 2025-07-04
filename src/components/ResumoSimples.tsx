@@ -107,44 +107,26 @@ export default function ResumoSimples() {
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Exemplo Prático</h2>
         <div className="bg-gray-50 p-6 rounded-lg">
           <h3 className="text-lg font-bold text-gray-900 mb-4">
-            Impacto da Telemedicina no Atendimento Primário Durante a Pandemia
+            Impacto da Telemedicina no Atendimento Primário Durante a Pandemia - <span className='text-blue-500'>(Inserir no local Correto)</span>
           </h3>
           
           <div className="space-y-4 text-sm text-justify text-gray-700">
             <div>
-              <strong>Introdução:</strong> A pandemia de COVID-19 transformou rapidamente a prestação 
-              de serviços de saúde, acelerando a adoção da telemedicina como alternativa segura para 
-              manter o atendimento primário. Este estudo investiga os impactos dessa modalidade na 
-              qualidade do cuidado e satisfação dos pacientes. 
-            
-            
-          
-              <strong> Objetivos:</strong> Avaliar a eficácia da telemedicina no atendimento primário 
-              durante a pandemia e identificar fatores que influenciam a satisfação dos pacientes.
-          
-            
-           
-              <strong> Metodologia:</strong> Estudo observacional transversal com 200 pacientes atendidos 
-              via telemedicina entre março e setembro de 2020. Aplicou-se questionário validado para 
-              medir satisfação e eficácia do atendimento.
-          
-            
-         
-              <strong> Resultados:</strong> 85% dos pacientes relataram satisfação com o atendimento 
-              remoto. Houve redução de 60% no tempo de espera e 90% de resolução de casos simples. 
-              Principais limitações incluíram dificuldades tecnológicas em 15% dos casos.
-           
-            
-         
-              <strong> Conclusão:</strong> A telemedicina mostrou-se eficaz para o atendimento primário, 
-              especialmente em consultas de seguimento e casos menos complexos, representando uma 
-              alternativa viável para ampliar o acesso aos serviços de saúde.
-            </div>
+    <strong>Introdução:</strong> A pandemia de COVID-19 rapidamente transformou a prestação de serviços de saúde, acelerando a adoção da telemedicina como uma alternativa segura e eficaz para manter a continuidade do atendimento primário. Essa mudança radical no modelo de assistência levanta questões importantes sobre a qualidade do cuidado oferecido e a satisfação dos pacientes em um ambiente virtual. Este estudo, portanto, se propõe a investigar profundamente os impactos dessa modalidade inovadora na qualidade geral do atendimento e na percepção de satisfação dos indivíduos que a utilizaram. A compreensão desses fatores é crucial para aprimorar e expandir a telemedicina no cenário pós-pandemia.
+   
+    <strong> Objetivos:</strong> Os objetivos primários deste trabalho foram duplos: primeiro, avaliar a real eficácia da telemedicina na oferta de serviços de atendimento primário ao longo do período crítico da pandemia; e, segundo, identificar e analisar os diversos fatores que influenciaram diretamente a satisfação dos pacientes com essa nova forma de consulta e acompanhamento remoto.
+
+    <strong> Metodologia:</strong> Para atingir os objetivos propostos, foi conduzido um estudo observacional transversal. A pesquisa envolveu uma amostra de 200 pacientes que foram atendidos por meio da telemedicina. O período de coleta de dados abrangeu os meses de março a setembro de 2020, que marcam o auge da crise sanitária. Um questionário previamente validado foi aplicado a esses participantes, sendo a ferramenta principal para mensurar tanto os níveis de satisfação quanto a percepção de eficácia do atendimento remoto recebido.
+ 
+    <strong> Resultados:</strong> Os achados do estudo são encorajadores: uma expressiva maioria de 85% dos pacientes relatou satisfação com a experiência do atendimento via telemedicina. Em termos de eficiência, observou-se uma notável redução de 60% no tempo de espera por consultas, um benefício direto para os usuários. Além disso, a telemedicina demonstrou alta capacidade de resolução, com 90% dos casos simples sendo solucionados remotamente. No entanto, o estudo também apontou desafios significativos: as principais limitações incluíram dificuldades de ordem tecnológica, que afetaram 15% dos pacientes, destacando a necessidade de infraestrutura e suporte aprimorados.
+
+    <strong> Conclusão:</strong> Em suma, a telemedicina provou ser uma ferramenta altamente eficaz para a prestação de atendimento primário, revelando-se particularmente vantajosa para consultas de seguimento e manejo de casos de menor complexidade. Apesar das barreiras tecnológicas pontuais, os resultados reforçam seu potencial como uma alternativa viável e promissora para expandir o acesso aos serviços de saúde, otimizando recursos e proporcionando conveniência. A telemedicina, portanto, consolida-se como um pilar fundamental e duradouro no futuro da assistência médica.
+</div>
           </div>
           
           <div className="mt-4 pt-4 border-t">
             <p className="text-sm text-gray-600">
-              <strong>Palavras-chave:</strong> telemedicina; atenção primária; satisfação do paciente
+              <strong>Palavras-chave:</strong> telesaúde; atenção primária; satisfação do paciente - <span className='text-blue-500'>(Inserir no local Correto)</span>
             </p>
           </div>
         </div>

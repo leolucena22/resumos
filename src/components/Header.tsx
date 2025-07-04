@@ -8,7 +8,7 @@ export default function Header() {
           <div className="flex items-center">
             <BookOpen className="h-8 w-8 text-blue-600 mr-3" />
             <div>
-              <h1 className="text-lg font-bold text-gray-900">Guia de Resumos Acadêmicos</h1>
+              <h1 className="text-lg font-bold text-gray-900">Guia de Resumos Científicos</h1>
               <p className="text-sm text-gray-500">SOBREC - Congressos</p>
             </div>
           </div>

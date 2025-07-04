@@ -46,22 +46,13 @@ export default function Apresentacao() {
         <div className="space-y-4 text-gray-700">
           <ul className="list-disc list-inside space-y-2">
             <li>
-              <strong>Conheça seu Público:</strong> Adapte sua linguagem e profundidade do conteúdo ao nível de conhecimento da sua audiência.
-            </li>
-            <li>
               <strong>Pratique:</strong> Ensaiar a apresentação várias vezes ajuda a gerenciar o tempo e a fluidez da fala.
             </li>
             <li>
               <strong>Recursos Visuais:</strong> Utilize slides claros e concisos. Evite excesso de texto; use imagens, gráficos e tabelas para ilustrar seus pontos.
             </li>
             <li>
-              <strong>Linguagem Corporal:</strong> Mantenha contato visual, postura aberta e use gestos naturais.
-            </li>
-            <li>
               <strong>Gerenciamento do Tempo:</strong> Respeite o tempo alocado para sua apresentação. Treine para não exceder ou ficar muito aquém.
-            </li>
-            <li>
-              <strong>Preparação para Perguntas:</strong> Pense em possíveis perguntas e prepare respostas concisas e informativas.
             </li>
           </ul>
         </div>

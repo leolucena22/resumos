@@ -48,10 +48,10 @@ function InicioSection() {
       {/* Hero Section */}
       <div className="text-center py-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Guia Completo para Resumos Acadêmicos
+          Guia prático para organização e estruturação  de resumos científicos 
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Aprenda a estruturar resumos simples e expandidos seguindo as diretrizes do evento
+          Aprenda a estruturar resumos simples e expandidos seguindo as diretrizes de eventos organizados pela SOBREC
         </p>
       </div>
 
@@ -63,7 +63,7 @@ function InicioSection() {
             <h2 className="text-2xl font-bold text-gray-900">Resumo Simples</h2>
           </div>
           <p className="text-gray-600 mb-4">
-            Formato mais conciso com 250-350 palavras, ideal para apresentações diretas dos principais achados.
+            Formato conciso com 250-350 palavras, ideal para apresentações diretas dos principais achados.
           </p>
           <ul className="space-y-2 text-sm text-gray-600">
             <li className="flex items-center">
@@ -72,7 +72,7 @@ function InicioSection() {
             </li>
             <li className="flex items-center">
               <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-              Sem referências bibliográficas
+              Sem citações e referências bibliográficas 
             </li>
             <li className="flex items-center">
               <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
