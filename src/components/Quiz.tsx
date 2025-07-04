@@ -5,7 +5,7 @@ import { HelpCircle, CheckCircle, XCircle, Award } from 'lucide-react'
 
 const questions = [
   {
-    questionText: 'Qual a extensão mínima de um Resumo Expandido, segundo as diretrizes do III CONASC?',
+    questionText: 'Qual a extensão mínima de um Resumo Expandido, segundo as diretrizes do congresso?',
     answerOptions: [
       { answerText: '1 a 2 páginas', isCorrect: false },
       { answerText: '2 a 3 páginas', isCorrect: false },
