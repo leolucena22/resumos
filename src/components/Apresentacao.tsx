@@ -84,6 +84,24 @@ export default function Apresentacao() {
               Após recebermos sua gravação, o material será analisado e a aprovação ou reprovação poderá ser acompanhada na sua área de inscrito.
             </li>
           </ul>
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <a
+              href="https://pages.ime.events/tutorial-para-gravacao/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Gravador 01
+            </a>
+            <a
+              href="https://tutorial-gravacao-de-tel-nij0yum.gamma.site/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Gravador 02
+            </a>
+          </div>
         </div>
       </div>
 
