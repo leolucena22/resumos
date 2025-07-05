@@ -1,4 +1,4 @@
-import { FileText, BookOpen, Presentation, HelpCircle } from 'lucide-react'
+import { FileText, BookOpen, Presentation, HelpCircle, LucideFileVideo } from 'lucide-react'
 
 type NavigationProps = {
   activeSection: string;
@@ -11,6 +11,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
     { id: 'resumo-simples', label: 'Resumo Simples', icon: FileText },
     { id: 'resumo-expandido', label: 'Resumo Expandido', icon: BookOpen },
     { id: 'apresentacao', label: 'Apresentação', icon: Presentation },
+    { id: 'material-complementar', label: 'Material Complementar', icon: LucideFileVideo },
     { id: 'quiz', label: 'Quiz', icon: HelpCircle },
   ]
 

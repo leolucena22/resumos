@@ -9,6 +9,7 @@ import ResumoExpandido from '@/components/ResumoExpandido'
 import Apresentacao from '@/components/Apresentacao'
 import Quiz from '@/components/Quiz'
 import Footer from '@/components/Footer'
+import MaterialComplementar from '@/components/MaterialComplementar'
 import './globals.css'
 
 export default function Home() {
@@ -24,6 +25,8 @@ export default function Home() {
         return <Apresentacao />
       case 'quiz':
         return <Quiz />
+      case 'material-complementar':
+        return <MaterialComplementar />
       default:
         return <InicioSection />
     }
