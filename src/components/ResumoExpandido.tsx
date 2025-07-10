@@ -144,6 +144,40 @@ export default function ResumoExpandido() {
         </div>
       </div>
 
+      {/*Referências */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Modelos de Referências</h2>
+        <p className="text-gray-600 mb-4">
+          Utilize o formato de citação da <strong>ABNT NBR 6023:2018</strong> para todas as referências bibliográficas. Assegure-se de incluir todas as fontes citadas no texto.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <span className="font-semibold text-gray-800">Anais de eventos:</span>
+            <p className="text-gray-700 text-sm mt-1">
+              BRAYNER, A. R. A.; MEDEIROS, C. B. Incorporação do tempo em SGBD orientado a objetos. In: <strong>Simpósio Brasileiro De Banco De Dados</strong>, 9., 1994, São Paulo. Anais [...]. São Paulo: USP. p. 16-29, 1994
+            </p>
+          </div>
+          <div>
+            <span className="font-semibold text-gray-800">Artigo científico:</span>
+            <p className="text-gray-700 text-sm mt-1">
+              DOREA, R. D.; COSTA, J. N.; BATITA, J. M.; FERREIRA, M. M.; MENEZES, R. V.; SOUZA, T. S. Reticuloperitonite traumática associada à esplenite e hepatite em bovino: relato de caso. <strong>Veterinária e Zootecnia</strong>, São Paulo, v. 18, n. 4, p. 199-202, 2011.
+            </p>
+          </div>
+          <div>
+            <span className="font-semibold text-gray-800">Livro:</span>
+            <p className="text-gray-700 text-sm mt-1">
+              LIMA, N. T.; HOCHMAN, G. <strong>Condições de saúde e população</strong>. Rio de Janeiro: Editora Fiocruz, 1996.
+            </p>
+          </div>
+          <div>
+            <span className="font-semibold text-gray-800">Trabalho de conclusão de curso:</span>
+            <p className="text-gray-700 text-sm mt-1">
+              SILVA, J. C. <strong>A atuação da enfermagem na atenção primária à saúde</strong>. Trabalho de Conclusão de Curso (Bacharelado em Enfermagem) – Universidade Federal do Ceará, Fortaleza, 55 f. 2022.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Tabelas e Figuras */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Tabelas e Figuras</h2>
