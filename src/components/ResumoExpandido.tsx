@@ -31,7 +31,7 @@ export default function ResumoExpandido() {
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 mr-3" />
               <div>
                 <h3 className="font-semibold text-gray-900">Referências</h3>
-                <p className="text-gray-600">Bibliográficas obrigatórias (ABNT NBR 6023:2018)</p>
+                <p className="text-gray-600">Bibliográficas obrigatórias (ABNT 10520 (2023))</p>
               </div>
             </div>
           </div>
