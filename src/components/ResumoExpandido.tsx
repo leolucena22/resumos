@@ -137,7 +137,7 @@ export default function ResumoExpandido() {
               </div>
               <div>
                 <h4 className="font-medium text-gray-900">5. Referências</h4>
-                <p className="text-gray-600">Bibliografia em ordem alfabética</p>
+                <p className="text-gray-600">Bibliografia em ordem alfabética (ABNT 10520 (2023))</p>
               </div>
             </div>
           </div>
