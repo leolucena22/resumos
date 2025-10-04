@@ -1,4 +1,4 @@
-import { Megaphone, Lightbulb, CheckCircle, Video, Image, Star } from 'lucide-react' // Adicione Video e Image aqui
+import { Megaphone, Lightbulb, CheckCircle, Video, Image as ImageIcon, Star } from 'lucide-react' // Adicione Video e Image aqui
 
 export default function Apresentacao() {
   return (
@@ -108,7 +108,7 @@ export default function Apresentacao() {
       {/* Seção: 7.2. Modalidade E-banner */}
       <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500"> {/* Usando green-500 para a borda do e-banner */}
         <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-          <Image className="h-6 w-6 text-green-500 mr-2" /> {/* Usando green-500 para o ícone do e-banner */}
+          <ImageIcon className="h-6 w-6 text-green-500 mr-2" /> {/* Usando green-500 para o ícone do e-banner */}
           Modalidade E-banner
         </h2>
         <div className="space-y-4 text-gray-700">

@@ -1,0 +1,5 @@
+Quero que você use o core do projeto congress-sales-system (login, lógica do dashboard, criação de eventos(congressos), 
+geração da página do congresso com slug, salvamento em banco de dados com supabase) para modificar o atual projeto de resumos
+e transformalo em um sistema de geração de editais de submissão de resumos dos congressos cadastrados pelo admin, deve ter um opção de carregar os modelos
+(resumos expandido com idenfitifição e sem, modelos de apresentação oral e e-banner no dashboard de admin) esses botões de download devem permanecer bem vísíveis e 
+chamativos na página do edital. Mantem a parte dos tutoriais que tem atualmente, juntamente com as normas (mas tudo poderá ser editado posteriorente caso desejado)
