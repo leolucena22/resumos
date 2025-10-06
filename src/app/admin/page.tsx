@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Link as LinkIcon, CalendarClock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdminSkeletonLoader, { CongressListSkeleton } from '@/components/AdminSkeletonLoader';
 
 interface FAQItem {
   question: string;
@@ -130,9 +131,11 @@ export default function AdminPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('basic');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCongresses = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch('/api/congresses');
         if (!response.ok) throw new Error('Failed to fetch congresses');
@@ -144,11 +147,13 @@ export default function AdminPage() {
       } catch (error) {
         console.error('Error fetching congresses:', error);
         toast.error('Erro ao carregar editais');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchCongresses();
-  }, [selectedCongress]);
+  }, []);
 
   useEffect(() => {
     if (selectedCongress) {
@@ -461,28 +466,34 @@ export default function AdminPage() {
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg text-gray-900 font-semibold mb-4">Editais de Congresso</h2>
               <div className="space-y-2">
-                {congresses.map((congress) => (
-                  <div key={congress.id} className="flex items-center gap-1">
-                    <button onClick={() => setSelectedCongress(congress.id)} className={`w-full text-left p-3 rounded-lg transition-colors ${selectedCongress === congress.id ? 'bg-blue-50 border-2 border-blue-200' : 'hover:bg-gray-50 border-2 border-transparent'}`}>
-                      <div className="font-medium text-gray-900">{congress.title}</div>
-                      <div className="text-sm text-gray-500">{congress.date}</div>
-                    </button>
-                    <div className="flex items-center">
-                      <button onClick={() => handleCopyLink(congress.slug)} className="p-2 text-gray-500 hover:text-blue-700 hover:bg-blue-100 rounded-full transition-colors" title="Copiar link do edital">
-                        <LinkIcon className="w-4 h-4" />
+                {isLoading ? (
+                  <CongressListSkeleton />
+                ) : (
+                  congresses.map((congress) => (
+                    <div key={congress.id} className="flex items-center gap-1">
+                      <button onClick={() => setSelectedCongress(congress.id)} className={`w-full text-left p-3 rounded-lg transition-colors ${selectedCongress === congress.id ? 'bg-blue-50 border-2 border-blue-200' : 'hover:bg-gray-50 border-2 border-transparent'}`}>
+                        <div className="font-medium text-gray-900">{congress.title}</div>
+                        <div className="text-sm text-gray-500">{congress.date}</div>
                       </button>
-                      <button onClick={() => handleDelete(congress.id)} className="p-2 text-gray-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors" title="Apagar edital">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center">
+                        <button onClick={() => handleCopyLink(congress.slug)} className="p-2 text-gray-500 hover:text-blue-700 hover:bg-blue-100 rounded-full transition-colors" title="Copiar link do edital">
+                          <LinkIcon className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDelete(congress.id)} className="p-2 text-gray-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors" title="Apagar edital">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-3">
-            {congressInfo ? (
+            {isLoading ? (
+              <AdminSkeletonLoader />
+            ) : congressInfo ? (
               <div className="bg-white rounded-lg shadow">
                 <div className="border-b">
                   <nav className="flex">
