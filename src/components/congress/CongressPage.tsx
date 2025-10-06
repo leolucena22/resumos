@@ -321,7 +321,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                                 {editalSections.map((section) => (
                                     <div key={section.id} className="bg-white rounded-lg shadow-lg p-8 border-l-4" style={{ borderColor: colors.primary }}>
                                         <h3 className="text-3xl font-bold mb-4" style={{ color: colors.secondary }}>{section.title}</h3>
-                                        <div className="prose max-w-none text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: section.content.replace(/\n/g, '<br />') }}></div>
+                                        <div className="tiptap-container prose max-w-none text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: section.content.replace(/\n/g, '<br />') }}></div>
                                     </div>
                                 ))}
                             </div>

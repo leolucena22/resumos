@@ -24,3 +24,8 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.tiptap-container.prose a {
+  color: #2563eb !important; /* blue-600 */
+  text-decoration: underline !important;
+}

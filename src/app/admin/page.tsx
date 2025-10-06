@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Trash2, Link as LinkIcon, CalendarClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdminSkeletonLoader, { CongressListSkeleton } from '@/components/AdminSkeletonLoader';
+import TiptapEditor from '@/components/TiptapEditor';
 
 interface FAQItem {
   question: string;
@@ -153,6 +154,7 @@ export default function AdminPage() {
     };
 
     fetchCongresses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -661,12 +663,10 @@ export default function AdminPage() {
                               </div>
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Conteúdo</label>
-                                <textarea
-                                  value={section.content}
-                                  onChange={(e) => updateEditalSection(section.id, { content: e.target.value })}
-                                  disabled={!isEditing}
-                                  rows={6}
-                                  className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+                                <TiptapEditor
+                                  content={section.content}
+                                  onChange={(newContent: string) => updateEditalSection(section.id, { content: newContent })}
+                                  isEditing={isEditing}
                                 />
                               </div>
                             </div>
