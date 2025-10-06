@@ -574,25 +574,45 @@ export default function AdminPage() {
 
                   {activeTab === 'templates' && (
                     <div className="space-y-6">
-                        <h3 className="text-lg text-gray-900 font-semibold">Upload de Modelos</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {([
-                                { type: 'resumoExpandidoComId', label: 'Resumo Expandido (com Identificação)' },
-                                { type: 'resumoExpandidoSemId', label: 'Resumo Expandido (sem Identificação)' },
-                                { type: 'apresentacaoOral', label: 'Apresentação Oral' },
-                                { type: 'eBanner', label: 'e-Banner' },
-                            ] as const).map(({ type, label }) => (
-                                <div key={type} className="border rounded-lg p-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-                                    <input type="file" disabled={!isEditing} onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], type)} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                                    {congressInfo.templateUrls?.[type] && (
-                                        <div className="mt-2">
-                                            <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">Ver arquivo atual</a>
-                                        </div>
-                                    )}
+                      <h3 className="text-lg text-gray-900 font-semibold">Upload de Modelos</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {([
+                          { type: 'resumoExpandidoComId', label: 'Resumo Expandido (com Identificação)' },
+                          { type: 'resumoExpandidoSemId', label: 'Resumo Expandido (sem Identificação)' },
+                          { type: 'apresentacaoOral', label: 'Apresentação Oral' },
+                          { type: 'eBanner', label: 'e-Banner' },
+                        ] as const).map(({ type, label }) => (
+                          <div key={type} className={`border rounded-lg p-4 transition-colors ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+                            {isEditing ? (
+                              <>
+                                <input
+                                  type="file"
+                                  onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], type)}
+                                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                />
+                                {congressInfo.templateUrls?.[type] && (
+                                  <div className="mt-2">
+                                    <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                      Ver arquivo atual
+                                    </a>
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              congressInfo.templateUrls?.[type] ? (
+                                <div className="mt-2">
+                                  <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                    Ver arquivo
+                                  </a>
                                 </div>
-                            ))}
-                        </div>
+                              ) : (
+                                <p className="text-sm text-gray-500 mt-2">Nenhum modelo carregado.</p>
+                              )
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
