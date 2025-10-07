@@ -41,3 +41,20 @@ body {
         padding-left: 2rem !important;
     }
 }
+
+/* Override Tiptap list styles */
+.tiptap-container.prose ul {
+    list-style-type: disc !important;
+    padding-left: 1rem !important;
+    margin-left: 1rem;
+}
+
+.tiptap-container.prose ol {
+    list-style-type: decimal !important;
+    padding-left: 1rem !important;
+    margin-left: 1rem;
+}
+
+.tiptap-container.prose li {
+    margin-left: 1.5rem;
+}
