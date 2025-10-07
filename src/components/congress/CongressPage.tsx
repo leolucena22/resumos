@@ -303,7 +303,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
 
                 {/* Edital Sections */}
                 {editalSections && editalSections.length > 0 && (
-                    <Section id="edital-content" className="py-20 md:py-32 px-4 bg-gradient-to-b from-white to-gray-50">
+                    <div id="edital-content" className="py-20 md:py-32 px-4 bg-gradient-to-b from-white to-gray-50">
                         <div className="max-w-6xl mx-auto">
                             <div className="text-center mb-16">
                                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-8 relative group">
@@ -321,7 +321,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                                 {editalSections.map((section) => (
                                     <div key={section.id} className="bg-white rounded-lg shadow-lg p-8 border-l-4" style={{ borderColor: colors.primary }}>
                                         <h3 className="text-3xl font-bold mb-4" style={{ color: colors.secondary }}>{section.title}</h3>
-                                        <div className="tiptap-container prose max-w-none text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: section.content.replace(/\n/g, '<br />') }}></div>
+                                        <div className="tiptap-container max-w-none text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: section.content }}></div>
                                     </div>
                                 ))}
                             </div>
@@ -342,7 +342,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                                 </div>
                             )}
                         </div>
-                    </Section>
+                    </div>
                 )}
 
                 {/* Template Download Section */}

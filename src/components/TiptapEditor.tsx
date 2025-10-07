@@ -9,10 +9,12 @@ import Highlight from '@tiptap/extension-highlight';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import Link from '@tiptap/extension-link';
+import TextAlign from '@tiptap/extension-text-align';
 import EmojiPicker from 'emoji-picker-react';
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, 
-  List, ListOrdered, Palette, Highlighter, Link2, Smile
+  List, ListOrdered, Palette, Highlighter, Link2, Smile,
+  AlignCenter, AlignLeft, AlignRight, AlignJustify
 } from 'lucide-react';
 import Modal from './Modal';
 
@@ -63,6 +65,18 @@ const EditorToolbar = ({ editor, openLinkModal, toggleEmojiPicker }: EditorToolb
       <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')}>
         <Strikethrough className="w-4 h-4" />
       </ToolbarButton>
+      <ToolbarButton onClick={() => editor.chain().focus().toggleTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })}>
+        <AlignLeft className="w-4 h-4" />
+      </ToolbarButton>
+      <ToolbarButton onClick={() => editor.chain().focus().toggleTextAlign('center').run()} isActive={editor.isActive({ textAlign: 'center' })}>
+        <AlignCenter className="w-4 h-4" />
+      </ToolbarButton>
+      <ToolbarButton onClick={() => editor.chain().focus().toggleTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })}>
+        <AlignRight className="w-4 h-4" />
+      </ToolbarButton>
+      <ToolbarButton onClick={() => editor.chain().focus().toggleTextAlign('justify').run()} isActive={editor.isActive({ textAlign: 'justify' })}>
+        <AlignJustify className="w-4 h-4" />
+      </ToolbarButton>
       <ToolbarButton onClick={openLinkModal} isActive={editor.isActive('link')}>
         <Link2 className="w-4 h-4" />
       </ToolbarButton>
@@ -110,6 +124,17 @@ const TiptapEditor = ({ content, onChange, isEditing }: TiptapEditorProps) => {
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO: Making this true would be better
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO: Making this true would be better
+        },
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
       }),
       Underline,
       Strike,
