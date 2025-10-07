@@ -211,24 +211,49 @@ const TiptapEditor = ({ content, onChange, isEditing }: TiptapEditorProps) => {
         </div>
       )}
       <Modal isOpen={isLinkModalOpen} onClose={closeLinkModal} title="Adicionar / Editar Hiperlink">
-        <div className="flex flex-col gap-4">
-            <input 
-                type="url" 
+        <div className="space-y-6 p-2">
+          <div>
+            <label htmlFor="link-url" className="block text-sm font-medium text-gray-700 mb-2">
+              URL do Link
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Link2 className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <input
+                type="url"
+                id="link-url"
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
                 placeholder="https://exemplo.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-            />
-            <div className="flex justify-end gap-3">
-                <button onClick={closeLinkModal} className="px-6 py-2 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors">
-                    Cancelar
-                </button>
-                <button onClick={handleSetLink} className="px-6 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                    Salvar
-                </button>
+                className="block w-full rounded-md text-gray-500 border-gray-300 pl-10 shadow-sm focus:outline-none sm:text-sm py-3"
+              />
             </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={closeLinkModal}
+              className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleSetLink}
+              className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Salvar
+            </button>
+          </div>
         </div>
       </Modal>
+      <style jsx global>{`
+        .ProseMirror a {
+          color: #2563eb !important;
+          text-decoration: underline !important;
+        }
+      `}</style>
     </div>
   );
 };
