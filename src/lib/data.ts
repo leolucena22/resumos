@@ -67,9 +67,16 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
 
 // Function to create a new congress
 export async function createCongress(congress: Partial<Congress>): Promise<Congress> {
+  const insertData: Partial<Congress> & { book_chapter_edital_url?: string } = { ...congress };
+
+  if (insertData.bookChapterEditalUrl !== undefined) {
+    insertData.book_chapter_edital_url = insertData.bookChapterEditalUrl;
+    delete insertData.bookChapterEditalUrl;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
-    .insert([congress])
+    .insert([insertData])
     .select()
     .single();
 

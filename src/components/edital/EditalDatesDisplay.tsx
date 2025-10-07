@@ -7,10 +7,26 @@ interface EditalDatesDisplayProps {
   colors: Congress['colors'];
 }
 
-const calculateTimeLeft = (targetDate: string) => {
-  const target = new Date(targetDate);
-  target.setHours(23, 59, 59, 999);
+// Helper to create a reliable Date object from a Deadline
+const getDeadlineDate = (deadline: Deadline): Date => {
+  const dateParts = deadline.date.split('-').map(part => parseInt(part, 10));
+  const timeParts = (deadline.time || '23:59').split(':').map(part => parseInt(part, 10));
 
+  const year = dateParts[0];
+  const month = dateParts[1] - 1; // Month is 0-indexed
+  const day = dateParts[2];
+
+  const hours = timeParts[0] || 23;
+  const minutes = timeParts[1] || 59;
+  const seconds = timeParts.length > 2 ? timeParts[2] : 59;
+
+  return new Date(year, month, day, hours, minutes, seconds);
+};
+
+const calculateTimeLeft = (deadline: Deadline | null) => {
+  if (!deadline) return {};
+
+  const target = getDeadlineDate(deadline);
   const difference = +target - +new Date();
   let timeLeft = {};
 
@@ -31,34 +47,42 @@ const getNextUpcomingDeadline = (deadlines: Deadline[] | undefined): Deadline | 
 
   const upcoming = deadlines
     .filter(d => {
-      const deadlineDate = new Date(d.date);
-      deadlineDate.setHours(23, 59, 59, 999);
+      const deadlineDate = getDeadlineDate(d);
       return deadlineDate > now;
     })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    .sort((a, b) => getDeadlineDate(a).getTime() - getDeadlineDate(b).getTime());
 
   return upcoming.length > 0 ? upcoming[0] : null;
 };
 
-const formatDate = (isoString: string | undefined) => {
-  if (!isoString) return 'N/A';
+const formatDate = (deadline: Deadline | undefined) => {
+  if (!deadline) return 'N/A';
   try {
-    const date = new Date(isoString);
+    const [year, month, day] = deadline.date.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
     return date.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
   } catch {
-    return isoString;
+    return deadline.date;
   }
 };
 
-const Countdown = ({ targetDate }: { targetDate: string }) => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+interface TimeLeft {
+  days?: number;
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+}
+
+const Countdown = ({ deadline }: { deadline: Deadline | null }) => {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(deadline));
 
   useEffect(() => {
+    if (!deadline) return;
     const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(targetDate));
+      setTimeLeft(calculateTimeLeft(deadline));
     }, 1000);
     return () => clearTimeout(timer);
-  });
+  }, [deadline, timeLeft]);
 
   const timeUnits = {
     days: 'Dias',
@@ -89,8 +113,7 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
             <div className="absolute inset-0 bg-white/20 rounded-xl md:rounded-2xl blur-xl group-hover:bg-white/30 transition-all duration-300"></div>
             <div className="relative flex flex-col items-center justify-center bg-white/10 backdrop-blur-md p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border border-white/30 shadow-xl group-hover:scale-105 transition-transform duration-300">
               <div className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-0.5 sm:mb-1 tracking-tight">
-                {/* @ts-expect-error: Dynamic key access for timeLeft object */}
-                {String(timeLeft[unit] || 0).padStart(2, '0')}
+                {String(timeLeft[unit as keyof TimeLeft] || 0).padStart(2, '0')}
               </div>
               <div className="text-[10px] sm:text-xs md:text-sm font-bold text-white/90 uppercase tracking-wider">
                 {label}
@@ -104,7 +127,21 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
 };
 
 const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, colors }) => {
-  const nextSubmissionDeadline = getNextUpcomingDeadline(editalDates.submissionDeadlines);
+  const now = new Date();
+  const upcomingSubmissionIndex = (editalDates.submissionDeadlines || []).findIndex(d => {
+      const deadlineDate = getDeadlineDate(d);
+      return deadlineDate > now;
+  });
+
+  const submissionDeadlineToShow = upcomingSubmissionIndex !== -1
+      ? (editalDates.submissionDeadlines || [])[upcomingSubmissionIndex]
+      : null;
+
+  const resultsDeadlineToShow = upcomingSubmissionIndex !== -1 && editalDates.resultsDeadlines && editalDates.resultsDeadlines.length > upcomingSubmissionIndex
+      ? editalDates.resultsDeadlines[upcomingSubmissionIndex]
+      : null;
+
+  const nextPresentationDeadline = getNextUpcomingDeadline(editalDates.presentationDeadlines);
 
   const DeadlineItem = ({ deadline, icon: Icon, colors }: { deadline: Deadline; icon: React.ElementType; colors: Congress['colors'] }) => {
     return (
@@ -117,7 +154,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
           <div className="flex-1 min-w-0">
             <p className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide mb-0.5 sm:mb-1">Prazo</p>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold truncate" style={{ color: colors.primary }}>
-              {formatDate(deadline.date)}
+              {formatDate(deadline)}
             </p>
           </div>
         </div>
@@ -125,10 +162,8 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
     );
   };
 
-  const DeadlineCategory = ({ title, deadlines, icon, colors }: { title: string; deadlines: Deadline[] | undefined; icon: React.ElementType; colors: Congress['colors'] }) => {
-    const nextDeadline = getNextUpcomingDeadline(deadlines);
-
-    if (!nextDeadline) {
+  const DeadlineCategory = ({ title, deadline, icon, colors }: { title: string; deadline: Deadline | null; icon: React.ElementType; colors: Congress['colors'] }) => {
+    if (!deadline) {
       return null;
     }
 
@@ -138,7 +173,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
           <div className="w-1 md:w-1.5 h-6 md:h-8 rounded-full" style={{ backgroundColor: colors.accent }}></div>
           {title}
         </h4>
-        <DeadlineItem deadline={nextDeadline} icon={icon} colors={colors} />
+        <DeadlineItem deadline={deadline} icon={icon} colors={colors} />
       </div>
     );
   };
@@ -149,7 +184,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
       <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-12 border border-gray-200/50">
         
         {/* Hero Banner - Next Deadline */}
-        {nextSubmissionDeadline ? (
+        {submissionDeadlineToShow ? (
           <div className="relative mb-8 md:mb-12 overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl group">
             <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnptLTEyIDBjMy4zMTQgMCA2IDIuNjg2IDYgNnMtMi42ODYgNi02IDYtNi0yLjY4Ni02LTYgMi42ODYtNiA2LTZ6IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjwvZz48L3N2Zz4=')]"></div>
             <div
@@ -161,9 +196,9 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
                 <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest">Encerramento das Submissões</span>
               </div>
               <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight mt-2 sm:mt-3 md:mt-4 mb-1 sm:mb-2 drop-shadow-lg break-words">
-                {formatDate(nextSubmissionDeadline.date)}
+                {formatDate(submissionDeadlineToShow)}
               </p>
-              <Countdown targetDate={nextSubmissionDeadline.date} />
+              <Countdown deadline={submissionDeadlineToShow} />
             </div>
           </div>
         ) : (
@@ -189,7 +224,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-500 text-[10px] sm:text-xs md:text-sm uppercase tracking-wide mb-0.5 sm:mb-1">Abertura do Edital</p>
                       <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold truncate" style={{ color: colors.primary }}>
-                        {formatDate(editalDates.openingDate)}
+                        {formatDate({date: editalDates.openingDate, name: ''})}
                       </p>
                     </div>
                   </div>
@@ -205,7 +240,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-500 text-[10px] sm:text-xs md:text-sm uppercase tracking-wide mb-0.5 sm:mb-1">Publicação dos Anais</p>
                       <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold truncate" style={{ color: colors.primary }}>
-                        {formatDate(editalDates.publicationDate)}
+                        {formatDate({date: editalDates.publicationDate, name: ''})}
                       </p>
                     </div>
                   </div>
@@ -228,15 +263,19 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
 
         {/* Deadline Categories - Modern Column Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          <DeadlineCategory 
-            title="Resultados das Submissões" 
-            deadlines={editalDates.resultsDeadlines} 
-            icon={CalendarX} 
-            colors={colors} 
-          />
+          {resultsDeadlineToShow && (
+            <div className="space-y-3 md:space-y-4">
+              <h4 className="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2 md:gap-3" style={{ color: colors.secondary }}>
+                <div className="w-1 md:w-1.5 h-6 md:h-8 rounded-full" style={{ backgroundColor: colors.accent }}></div>
+                Resultados das Submissões
+              </h4>
+              <DeadlineItem deadline={resultsDeadlineToShow} icon={CalendarX} colors={colors} />
+            </div>
+          )}
+
           <DeadlineCategory 
             title="Envio das Apresentações" 
-            deadlines={editalDates.presentationDeadlines} 
+            deadline={nextPresentationDeadline} 
             icon={CalendarDays} 
             colors={colors} 
           />

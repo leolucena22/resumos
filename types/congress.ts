@@ -2,6 +2,7 @@ export type Deadline = {
   id: string;
   name: string;
   date: string;
+  time?: string;
 };
 
 export type Congress = {

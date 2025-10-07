@@ -19,8 +19,8 @@ interface EditalSection {
 
 interface Deadline {
   id: string;
-  name: string;
   date: string;
+  time?: string;
 }
 
 interface Congress {
@@ -85,19 +85,26 @@ const DeadlineSection = ({ title, deadlines, onAdd, onUpdate, onRemove, isEditin
     </div>
     <div className="space-y-4">
       {deadlines.map((deadline, index) => (
-        <div key={deadline.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        <div key={deadline.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
           <input
             type="text"
             value={deadline.name}
             onChange={(e) => onUpdate(index, { name: e.target.value })}
             disabled={!isEditing}
             placeholder="Descrição do Prazo (ex: Submissão Regular)"
-            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50 md:col-span-2"
           />
           <input
             type="date"
             value={deadline.date}
             onChange={(e) => onUpdate(index, { date: e.target.value })}
+            disabled={!isEditing}
+            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+          />
+          <input
+            type="time"
+            value={deadline.time || ''}
+            onChange={(e) => onUpdate(index, { time: e.target.value })}
             disabled={!isEditing}
             className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
           />
@@ -344,6 +351,7 @@ export default function AdminPage() {
       id: `deadline-${Date.now()}`,
       name: 'Novo Prazo',
       date: new Date().toISOString().split('T')[0],
+      time: '23:59',
     };
     const currentDeadlines = congressInfo.editalDates?.[field] || [];
     setCongressInfo(prev => ({
