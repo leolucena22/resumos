@@ -25,11 +25,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.tiptap-container .prose a {
-    color: #2563eb !important; /* blue-600 */
-    text-decoration: underline !important;
-}
-
 @layer components {
     .tiptap-container .prose ul {
         list-style: disc !important;
@@ -57,4 +52,10 @@ body {
 
 .tiptap-container.prose li {
     margin-left: 1.5rem;
+}
+
+/* Force Tiptap link styles */
+.tiptap-container.prose a {
+    color: #2563eb !important; /* blue-600 */
+    text-decoration: underline !important;
 }
