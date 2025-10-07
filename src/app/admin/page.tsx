@@ -19,6 +19,7 @@ interface EditalSection {
 
 interface Deadline {
   id: string;
+  name: string;
   date: string;
   time?: string;
 }

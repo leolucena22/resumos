@@ -224,7 +224,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-500 text-[10px] sm:text-xs md:text-sm uppercase tracking-wide mb-0.5 sm:mb-1">Abertura do Edital</p>
                       <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold truncate" style={{ color: colors.primary }}>
-                        {formatDate({date: editalDates.openingDate, name: ''})}
+                        {formatDate({id: 'opening-date', name: 'Abertura do Edital', date: editalDates.openingDate!})}
                       </p>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-500 text-[10px] sm:text-xs md:text-sm uppercase tracking-wide mb-0.5 sm:mb-1">Publicação dos Anais</p>
                       <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold truncate" style={{ color: colors.primary }}>
-                        {formatDate({date: editalDates.publicationDate, name: ''})}
+                        {formatDate({id: 'publication-date', name: 'Publicação dos Anais', date: editalDates.publicationDate!})}
                       </p>
                     </div>
                   </div>
