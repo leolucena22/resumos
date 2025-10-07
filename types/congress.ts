@@ -12,6 +12,7 @@ export type Congress = {
   date: string;
   description: string;
   submissionUrl?: string;
+  bookChapterEditalUrl?: string;
   colors: {
     primary: string;
     secondary: string;
@@ -40,6 +41,7 @@ export interface CongressData {
   date: string;
   description: string;
   submissionUrl?: string;
+  bookChapterEditalUrl?: string;
   colors: {
     primary: string;
     secondary: string;

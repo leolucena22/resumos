@@ -7,8 +7,6 @@ export async function getCongresses(): Promise<Congress[]> {
 
   if (error) {
     console.error('Error fetching congresses:', error);
-    // Return an empty array on error to prevent the page from crashing.
-    // The frontend will handle the empty state.
     return [];
   }
 
@@ -24,7 +22,6 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     .single();
 
   if (error) {
-    // It's okay for single() to return an error if no rows are found.
     if (error.code === 'PGRST116') {
         return null;
     }
@@ -32,7 +29,14 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     throw new Error(`Could not fetch congress with slug ${slug}.`);
   }
 
-  return data;
+  const congressData = data as CongressData & { book_chapter_edital_url?: string };
+
+  if (congressData && congressData.book_chapter_edital_url) {
+    congressData.bookChapterEditalUrl = congressData.book_chapter_edital_url;
+    delete congressData.book_chapter_edital_url;
+  }
+
+  return congressData;
 }
 
 // Function to get a single congress by its ID
@@ -51,7 +55,14 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
         throw new Error(`Could not fetch congress with id ${id}.`);
     }
   
-    return data;
+    const congressData = data as CongressData & { book_chapter_edital_url?: string };
+
+    if (congressData && congressData.book_chapter_edital_url) {
+        congressData.bookChapterEditalUrl = congressData.book_chapter_edital_url;
+        delete congressData.book_chapter_edital_url;
+    }
+
+    return congressData;
   }
 
 // Function to create a new congress
@@ -72,9 +83,16 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
 
 // Function to update an existing congress
 export async function updateCongress(id: string, congress: Partial<CongressData>): Promise<CongressData> {
+  const updateData: Partial<CongressData> & { book_chapter_edital_url?: string } = { ...congress };
+
+  if (updateData.bookChapterEditalUrl !== undefined) {
+    updateData['book_chapter_edital_url'] = updateData.bookChapterEditalUrl;
+    delete updateData.bookChapterEditalUrl;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
-    .update(congress)
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();
@@ -97,7 +115,6 @@ export async function deleteCongress(id: string): Promise<void> {
       .list(folderPath);
 
     if (listError) {
-      // If the folder doesn't exist, it's not an error, just means no files to delete.
       if (listError.message !== 'The resource was not found') {
           console.error(`Error listing files for congress ${id}:`, listError);
           throw new Error(`Could not list files for deletion for congress ${id}.`);

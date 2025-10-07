@@ -78,7 +78,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
       return null;
     }
 
-    const { colors, title, subtitle, date, description, faq, templateUrls, editalSections, editalDates, submissionUrl } = congress;
+    const { colors, title, subtitle, date, description, faq, templateUrls, editalSections, editalDates, submissionUrl, bookChapterEditalUrl } = congress;
 
     const templates = [
         { key: 'resumoExpandidoComId', label: 'Resumo Expandido (com Identificação)' },
@@ -386,6 +386,37 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                         </div>
                     </div>
                 </Section>
+
+                {/* Book Chapter Edital Section */}
+                {bookChapterEditalUrl && (
+                    <Section className="py-20 md:py-32 px-4 bg-gray-50">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-8 relative group">
+                                <div
+                                    className="absolute inset-0 rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-300"
+                                    style={{ backgroundColor: colors.secondary }}
+                                ></div>
+                                <Award className="w-10 h-10 relative z-10" style={{ color: colors.secondary }} />
+                            </div>
+                            <h2 className="text-4xl md:text-6xl font-bold mb-6" style={{ color: colors.text }}>
+                                Edital para Capítulo de Livro
+                            </h2>
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
+                                Confira o edital para a publicação de capítulos de livro e saiba como participar.
+                            </p>
+                            <a
+                                href={bookChapterEditalUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-3 bg-white font-bold text-lg px-10 py-4 rounded-full shadow-lg hover:bg-gray-100 transform hover:scale-105 transition-all duration-300"
+                                style={{ color: colors.primary }}
+                            >
+                                <Download className="w-5 h-5" />
+                                <span>Acessar Edital</span>
+                            </a>
+                        </div>
+                    </Section>
+                )}
 
                 {/* FAQ Section */}
                 {faq && faq.length > 0 && (

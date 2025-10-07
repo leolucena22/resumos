@@ -31,6 +31,7 @@ interface Congress {
   date: string;
   description: string;
   submissionUrl?: string;
+  bookChapterEditalUrl?: string;
   colors: {
     primary: string;
     secondary: string;
@@ -262,6 +263,7 @@ export default function AdminPage() {
       date: '01 a 04 de Janeiro',
       description: 'Descrição detalhada do edital de submissão.',
       submissionUrl: '',
+      bookChapterEditalUrl: '',
       colors: { primary: '#0066cc', secondary: '#004499', accent: '#ff6600', background: '#f8f9fa', text: '#333333' },
       faq: [],
       contact: { email: 'contato@dominio.com', whatsapp: '5511999999999' },
@@ -536,6 +538,17 @@ export default function AdminPage() {
                            onChange={(e) => setCongressInfo({ ...congressInfo, submissionUrl: e.target.value })}
                            disabled={!isEditing}
                            placeholder="https://plataforma.com/submissao"
+                           className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+                         />
+                       </div>
+                       <div>
+                         <label className="block text-sm font-medium text-gray-700 mb-2">Link do edital de capítulo de livro</label>
+                         <input
+                           type="url"
+                           value={congressInfo.bookChapterEditalUrl || ''}
+                           onChange={(e) => setCongressInfo({ ...congressInfo, bookChapterEditalUrl: e.target.value })}
+                           disabled={!isEditing}
+                           placeholder="https://plataforma.com/capitulo-livro"
                            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
                          />
                        </div>
