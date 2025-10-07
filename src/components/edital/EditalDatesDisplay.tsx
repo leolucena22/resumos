@@ -104,12 +104,7 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
 };
 
 const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, colors }) => {
-  const allDeadlines = [
-    ...(editalDates.submissionDeadlines || []),
-    ...(editalDates.presentationDeadlines || []),
-    ...(editalDates.resultsDeadlines || []),
-  ];
-  const nextOverallDeadline = getNextUpcomingDeadline(allDeadlines);
+  const nextSubmissionDeadline = getNextUpcomingDeadline(editalDates.submissionDeadlines);
 
   const DeadlineItem = ({ deadline, icon: Icon, colors }: { deadline: Deadline; icon: React.ElementType; colors: Congress['colors'] }) => {
     return (
@@ -154,7 +149,7 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
       <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-12 border border-gray-200/50">
         
         {/* Hero Banner - Next Deadline */}
-        {nextOverallDeadline ? (
+        {nextSubmissionDeadline ? (
           <div className="relative mb-8 md:mb-12 overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl group">
             <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnptLTEyIDBjMy4zMTQgMCA2IDIuNjg2IDYgNnMtMi42ODYgNi02IDYtNi0yLjY4Ni02LTYgMi42ODYtNiA2LTZ6IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjwvZz48L3N2Zz4=')]"></div>
             <div
@@ -166,16 +161,16 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
                 <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest">Encerramento das Submissões</span>
               </div>
               <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight mt-2 sm:mt-3 md:mt-4 mb-1 sm:mb-2 drop-shadow-lg break-words">
-                {formatDate(nextOverallDeadline.date)}
+                {formatDate(nextSubmissionDeadline.date)}
               </p>
-              <Countdown targetDate={nextOverallDeadline.date} />
+              <Countdown targetDate={nextSubmissionDeadline.date} />
             </div>
           </div>
         ) : (
           <div className="mb-8 md:mb-12 text-center p-6 sm:p-8 md:p-10 bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl md:rounded-3xl border-2 border-dashed border-gray-300">
             <CalendarX className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 opacity-50" style={{ color: colors.secondary }} />
             <p className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: colors.secondary }}>
-              Todos os prazos do edital foram encerrados.
+              Todos os prazos de submissão foram encerrados.
             </p>
           </div>
         )}
@@ -234,15 +229,15 @@ const EditalDatesDisplay: React.FC<EditalDatesDisplayProps> = ({ editalDates, co
         {/* Deadline Categories - Modern Column Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <DeadlineCategory 
-            title="Envio das Apresentações" 
-            deadlines={editalDates.presentationDeadlines} 
-            icon={CalendarDays} 
-            colors={colors} 
-          />
-          <DeadlineCategory 
             title="Resultados das Submissões" 
             deadlines={editalDates.resultsDeadlines} 
             icon={CalendarX} 
+            colors={colors} 
+          />
+          <DeadlineCategory 
+            title="Envio das Apresentações" 
+            deadlines={editalDates.presentationDeadlines} 
+            icon={CalendarDays} 
             colors={colors} 
           />
         </div>
