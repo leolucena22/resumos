@@ -59,3 +59,7 @@ body {
     color: #2563eb !important; /* blue-600 */
     text-decoration: underline !important;
 }
+
+.prose p:empty::after {
+    content: "\00a0" !important;
+}
