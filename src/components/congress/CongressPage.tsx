@@ -59,7 +59,7 @@ function Section({
       {
         rootMargin: "-50px",
         threshold: 0.1,
-      },
+      }
     );
 
     if (node) {
@@ -140,7 +140,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
   }) => {
     const [isOpen, setIsOpen] = useState(false);
     const availableTemplates = templates.filter(
-      ({ key }) => templateUrls?.[key],
+      ({ key }) => templateUrls?.[key]
     );
 
     if (!templateUrls || availableTemplates.length === 0) {
@@ -152,7 +152,11 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
         <div className="relative flex flex-col items-end">
           {/* List of downloads */}
           <div
-            className={`w-72 mb-4 p-4 bg-white rounded-lg shadow-2xl border transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"}`}
+            className={`w-72 mb-4 p-4 bg-white rounded-lg shadow-2xl border transition-all duration-300 ease-in-out ${
+              isOpen
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8 pointer-events-none"
+            }`}
           >
             <div className="flex justify-between items-center mb-3">
               <h4 className="font-bold text-lg" style={{ color: colors.text }}>
@@ -165,22 +169,37 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
-                                                            <ul className="space-y-3">
-                                                                <li>
-                                                                    <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-all w-full text-left">
-                                                                        <Download className="w-5 h-5 flex-shrink-0" style={{ color: colors.accent }}/>
-                                                                        <span className="flex-1">Resumo Simples - Exemplo</span>
-                                                                    </button>
-                                                                </li>
-                                                                {availableTemplates.map(({ key, label }) => (
-                                                                    <li key={key}>
-                                                                        <a href={templateUrls[key]} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-all">
-                                                                            <Download className="w-5 h-5 flex-shrink-0" style={{ color: colors.accent }}/>
-                                                                            <span className="flex-1">{label}</span>
-                                                                        </a>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>          </div>
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-all w-full text-left"
+                >
+                  <Download
+                    className="w-5 h-5 flex-shrink-0"
+                    style={{ color: colors.accent }}
+                  />
+                  <span className="flex-1">Resumo Simples - Exemplo</span>
+                </button>
+              </li>
+              {availableTemplates.map(({ key, label }) => (
+                <li key={key}>
+                  <a
+                    href={templateUrls[key]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-all"
+                  >
+                    <Download
+                      className="w-5 h-5 flex-shrink-0"
+                      style={{ color: colors.accent }}
+                    />
+                    <span className="flex-1">{label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>{" "}
+          </div>
 
           {/* Main floating button */}
           <button
@@ -863,7 +882,9 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
 
               {congress.contact?.instagram && (
                 <a
-                  href={`https://instagram.com/${congress.contact?.instagram?.replace("@", "") || ""}`}
+                  href={`https://instagram.com/${
+                    congress.contact?.instagram?.replace("@", "") || ""
+                  }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 text-white/90 hover:text-white transition-all duration-300 text-lg md:text-xl bg-white/10 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white/15 hover:scale-105"
