@@ -24,7 +24,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
       ></div>
 
       {/* Modal Content */}
-      <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-fade-in-scale">
+      <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-fade-in-scale">
         <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold text-gray-800">{title}</h3>
             <button
@@ -35,7 +35,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
                 <X className="w-6 h-6" />
             </button>
         </div>
-        <div>
+        <div className="max-h-[80vh] overflow-y-auto pr-4">
             {children}
         </div>
       </div>
