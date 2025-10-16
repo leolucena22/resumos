@@ -10,6 +10,10 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableCell } from '@tiptap/extension-table-cell';
 import EmojiPicker from 'emoji-picker-react';
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, 
@@ -17,6 +21,7 @@ import {
   AlignCenter, AlignLeft, AlignRight, AlignJustify
 } from 'lucide-react';
 import Modal from './Modal';
+import TableMenu from './TableMenu';
 
 const ToolbarButton = ({ onClick, children, isActive = false }: { onClick: () => void, children: ReactNode, isActive?: boolean }) => (
   <button
@@ -105,6 +110,7 @@ const EditorToolbar = ({ editor, openLinkModal, toggleEmojiPicker }: EditorToolb
       <ToolbarButton onClick={toggleEmojiPicker}>
         <Smile className="w-4 h-4" />
       </ToolbarButton>
+      <TableMenu editor={editor} />
     </div>
   );
 };
@@ -145,6 +151,12 @@ const TiptapEditor = ({ content, onChange, isEditing }: TiptapEditorProps) => {
         openOnClick: false,
         autolink: true,
       }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: content,
     onUpdate: ({ editor }) => {

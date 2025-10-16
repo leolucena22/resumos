@@ -63,3 +63,22 @@ body {
 .prose p:empty::after {
     content: "\00a0" !important;
 }
+
+/* Table styles */
+.tiptap-container .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.tiptap-container .prose th,
+.tiptap-container .prose td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.tiptap-container .prose th {
+    font-weight: bold;
+    background-color: #f4f4f4;
+}
