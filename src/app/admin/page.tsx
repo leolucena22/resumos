@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Trash2, Link as LinkIcon, CalendarClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdminSkeletonLoader, { CongressListSkeleton } from '@/components/AdminSkeletonLoader';
@@ -459,6 +460,7 @@ export default function AdminPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Painel Administrativo - Editais</h1>
             <div className="flex gap-4">
+              <Link href="/admin/analytics" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Ver Métricas</Link>
               <button onClick={handleCreateNew} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">+ Novo Edital</button>
               {congressInfo && !isCreating && (
                 <button onClick={() => setIsEditing(!isEditing)} className={`px-4 py-2 rounded-lg transition-colors ${isEditing ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
