@@ -53,7 +53,7 @@ export default async function AnalyticsPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
               <BarChart2 className="w-8 h-8 text-blue-600" />
-              Análise de Acessos e Inscrições
+              Análise de Acessos e Cliques
             </h1>
             <p className="text-gray-500 mt-1">Visão geral dos acessos e cliques de inscrição por congresso.</p>
           </div>
