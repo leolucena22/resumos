@@ -55,7 +55,7 @@ export default async function AnalyticsPage() {
               <BarChart2 className="w-8 h-8 text-blue-600" />
               Análise de Acessos e Cliques
             </h1>
-            <p className="text-gray-500 mt-1">Visão geral dos acessos e cliques de inscrição por congresso.</p>
+            <p className="text-gray-500 mt-1">Visão geral dos acessos e cliques nas submissões.</p>
           </div>
            <Link href="/admin" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
               Voltar ao Painel
