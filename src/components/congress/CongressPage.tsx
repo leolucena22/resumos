@@ -11,7 +11,6 @@ import {
   Mail,
   Instagram,
   CalendarCheck,
-  Send,
   ArrowDown,
   ChevronDown,
   X,
@@ -20,6 +19,8 @@ import Image from "next/image";
 import EditalDatesDisplay from "../edital/EditalDatesDisplay";
 import { CongressData } from "../../../types/congress";
 import Modal from "../Modal"; // Import the Modal component
+
+import SubmissionButton from "./SubmissionButton";
 
 // Helper to get contrasting text color
 const getContrastingTextColor = (hexColor: string) => {
@@ -500,7 +501,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                     style={{ borderColor: colors.primary }}
                   >
                     <h3
-                      className="text-3xl font-bold mb-4"
+                      className="text-2xl md:text-3xl font-bold mb-4"
                       style={{ color: colors.secondary }}
                     >
                       {section.title}
@@ -516,19 +517,12 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
               {/* --- New Submission Button --- */}
               {submissionUrl && (
                 <div className="text-center mt-16">
-                  <a
-                    href={submissionUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-3 text-white font-bold text-xl px-12 py-5 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
-                    style={{
-                      backgroundColor: colors.accent,
-                      color: getContrastingTextColor(colors.accent),
-                    }}
-                  >
-                    <Send className="w-6 h-6" />
-                    <span>Submeter Trabalho Agora</span>
-                  </a>
+                  <SubmissionButton 
+                    submissionUrl={submissionUrl}
+                    congressSlug={congress.slug}
+                    colors={colors}
+                    getContrastingTextColor={getContrastingTextColor}
+                  />
                 </div>
               )}
             </div>
