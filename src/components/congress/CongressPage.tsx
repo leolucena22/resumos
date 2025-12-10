@@ -79,9 +79,8 @@ function Section({
       id={id}
       ref={ref}
       style={style}
-      className={`transition-all duration-1000 ease-out ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-      } ${className}`}
+      className={`transition-all duration-1000 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        } ${className}`}
     >
       {children}
     </section>
@@ -96,6 +95,19 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Handle hash navigation after mount
+  useEffect(() => {
+    if (mounted && window.location.hash) {
+      setTimeout(() => {
+        const id = window.location.hash.substring(1);
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [mounted]);
 
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -153,11 +165,10 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
         <div className="relative flex flex-col items-end">
           {/* List of downloads */}
           <div
-            className={`w-72 mb-4 p-4 bg-white rounded-lg shadow-2xl border transition-all duration-300 ease-in-out ${
-              isOpen
+            className={`w-72 mb-4 p-4 bg-white rounded-lg shadow-2xl border transition-all duration-300 ease-in-out ${isOpen
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8 pointer-events-none"
-            }`}
+              }`}
           >
             <div className="flex justify-between items-center mb-3">
               <h4 className="font-bold text-lg" style={{ color: colors.text }}>
@@ -517,7 +528,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
               {/* --- New Submission Button --- */}
               {submissionUrl && (
                 <div className="text-center mt-16">
-                  <SubmissionButton 
+                  <SubmissionButton
                     submissionUrl={submissionUrl}
                     congressSlug={congress.slug}
                     colors={colors}
@@ -696,11 +707,10 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                 {faq.map((item, index) => (
                   <div
                     key={index}
-                    className={`group relative bg-white rounded-3xl shadow-sm overflow-hidden transition-all duration-500 border-2 hover:shadow-xl ${
-                      openIndex === index
+                    className={`group relative bg-white rounded-3xl shadow-sm overflow-hidden transition-all duration-500 border-2 hover:shadow-xl ${openIndex === index
                         ? "shadow-2xl scale-[1.02]"
                         : "hover:scale-[1.01]"
-                    }`}
+                      }`}
                     style={{
                       borderColor:
                         openIndex === index ? colors.accent : "#f1f5f9",
@@ -733,11 +743,10 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
 
                       <div className="flex-shrink-0 ml-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${
-                            openIndex === index
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${openIndex === index
                               ? "rotate-180 shadow-lg"
                               : "hover:shadow-md group-hover:scale-110"
-                          }`}
+                            }`}
                           style={{
                             backgroundColor:
                               openIndex === index
@@ -876,9 +885,8 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
 
               {congress.contact?.instagram && (
                 <a
-                  href={`https://instagram.com/${
-                    congress.contact?.instagram?.replace("@", "") || ""
-                  }`}
+                  href={`https://instagram.com/${congress.contact?.instagram?.replace("@", "") || ""
+                    }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 text-white/90 hover:text-white transition-all duration-300 text-lg md:text-xl bg-white/10 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white/15 hover:scale-105"
