@@ -256,19 +256,19 @@ export default function AdminPage() {
     }
   };
 
-  
 
-    const handleCopyLink = (slug: string) => {
 
-      const link = `${window.location.origin}/congress/${slug}`;
+  const handleCopyLink = (slug: string) => {
 
-      navigator.clipboard.writeText(link);
+    const link = `${window.location.origin}/congress/${slug}`;
 
-      toast.success('Link copiado!');
+    navigator.clipboard.writeText(link);
 
-    };
+    toast.success('Link copiado!');
 
-  
+  };
+
+
 
   const handleDuplicate = async (id: string) => {
     const congressToDuplicate = congresses.find((c) => c.id === id);
@@ -306,1081 +306,421 @@ export default function AdminPage() {
     }
   };
 
-  
 
-    const handleCreateNew = () => {
 
-      const newId = 'novo-congresso';
+  const handleCreateNew = () => {
 
-      const newCongress: Congress = {
+    const newId = 'novo-congresso';
 
-        id: newId,
+    const newCongress: Congress = {
 
-        title: 'Novo Congresso',
+      id: newId,
 
-        slug: 'novo-congresso',
+      title: 'Novo Congresso',
 
-        subtitle: 'Nome Completo do Novo Congresso',
+      slug: 'novo-congresso',
 
-        date: '01 a 04 de Janeiro',
+      subtitle: 'Nome Completo do Novo Congresso',
 
-        description: 'Descrição detalhada do edital de submissão.',
+      date: '01 a 04 de Janeiro',
 
-        submissionUrl: '',
+      description: 'Descrição detalhada do edital de submissão.',
 
-        bookChapterEditalUrl: '',
+      submissionUrl: '',
 
-        colors: { primary: '#0066cc', secondary: '#004499', accent: '#ff6600', background: '#f8f9fa', text: '#333333' },
+      bookChapterEditalUrl: '',
 
-        faq: [],
+      colors: { primary: '#0066cc', secondary: '#004499', accent: '#ff6600', background: '#f8f9fa', text: '#333333' },
 
-        contact: { email: 'contato@dominio.com', whatsapp: '5511999999999' },
+      faq: [],
 
-        templateUrls: {},
+      contact: { email: 'contato@dominio.com', whatsapp: '5511999999999' },
 
-        editalSections: [],
+      templateUrls: {},
 
-        editalDates: {
+      editalSections: [],
 
-          openingDate: new Date().toISOString().split('T')[0],
+      editalDates: {
 
-          submissionDeadlines: [],
+        openingDate: new Date().toISOString().split('T')[0],
 
-          presentationDeadlines: [],
+        submissionDeadlines: [],
 
-          resultsDeadlines: [],
+        presentationDeadlines: [],
 
-          publicationDate: undefined,
+        resultsDeadlines: [],
 
-        }
-
-      };
-
-      
-
-      setCongressInfo(newCongress);
-
-      setSelectedCongress(newId);
-
-      setIsEditing(true);
-
-      setIsCreating(true);
-
-    };
-
-  
-
-    const addFAQ = () => {
-
-      if (!congressInfo) return;
-
-      const newFAQ: FAQItem = { question: 'Nova pergunta?', answer: 'Nova resposta.' };
-
-      setCongressInfo({ ...congressInfo, faq: [...congressInfo.faq, newFAQ] });
-
-    };
-
-  
-
-    const updateFAQ = (index: number, updatedFAQ: Partial<FAQItem>) => {
-
-      if (!congressInfo) return;
-
-      const newFAQ = [...congressInfo.faq];
-
-      newFAQ[index] = { ...newFAQ[index], ...updatedFAQ };
-
-      setCongressInfo({ ...congressInfo, faq: newFAQ });
-
-    };
-
-  
-
-    const removeFAQ = (index: number) => {
-
-      if (!congressInfo) return;
-
-      const newFAQ = congressInfo.faq.filter((_, i) => i !== index);
-
-      setCongressInfo({ ...congressInfo, faq: newFAQ });
-
-    };
-
-  
-
-    const addEditalSection = () => {
-
-      if (!congressInfo) return;
-
-      const newSection = { id: Date.now().toString(), title: 'Nova Seção', content: 'Conteúdo da nova seção.' };
-
-      setCongressInfo({ ...congressInfo, editalSections: [...(congressInfo.editalSections || []), newSection] });
-
-    };
-
-  
-
-    const updateEditalSection = (id: string, updatedSection: Partial<EditalSection>) => {
-
-      if (!congressInfo || !congressInfo.editalSections) return;
-
-      setCongressInfo({
-
-        ...congressInfo,
-
-        editalSections: congressInfo.editalSections.map(section =>
-
-          section.id === id ? { ...section, ...updatedSection } : section
-
-        ),
-
-      });
-
-    };
-
-  
-
-    const removeEditalSection = (id: string) => {
-
-      if (!congressInfo || !congressInfo.editalSections) return;
-
-      setCongressInfo({
-
-        ...congressInfo,
-
-        editalSections: congressInfo.editalSections.filter(section => section.id !== id),
-
-      });
-
-    };
-
-  
-
-    const handleDateChange = (field: keyof NonNullable<Congress['editalDates']>, value: string) => {
-
-      if (!congressInfo) return;
-
-      setCongressInfo(prev => ({
-
-        ...prev!,
-
-        editalDates: {
-
-          ...(prev!.editalDates || {}),
-
-          [field]: value,
-
-        },
-
-      }));
-
-    };
-
-  
-
-    const addDeadline = (field: 'submissionDeadlines' | 'presentationDeadlines' | 'resultsDeadlines') => {
-
-      if (!congressInfo) return;
-
-      const newDeadline: Deadline = {
-
-        id: `deadline-${Date.now()}`,
-
-        name: 'Novo Prazo',
-
-        date: new Date().toISOString().split('T')[0],
-
-        time: '23:59',
-
-      };
-
-      const currentDeadlines = congressInfo.editalDates?.[field] || [];
-
-      setCongressInfo(prev => ({
-
-        ...prev!,
-
-        editalDates: {
-
-          ...(prev!.editalDates || {}),
-
-          [field]: [...currentDeadlines, newDeadline],
-
-        },
-
-      }));
-
-    };
-
-  
-
-    const updateDeadline = (field: 'submissionDeadlines' | 'presentationDeadlines' | 'resultsDeadlines', index: number, updatedDeadline: Partial<Deadline>) => {
-
-      if (!congressInfo || !congressInfo.editalDates) return;
-
-      const currentDeadlines = [...(congressInfo.editalDates[field] || [])];
-
-      currentDeadlines[index] = { ...currentDeadlines[index], ...updatedDeadline };
-
-      setCongressInfo(prev => ({
-
-        ...prev!,
-
-        editalDates: {
-
-          ...(prev!.editalDates || {}),
-
-          [field]: currentDeadlines,
-
-        },
-
-      }));
-
-    };
-
-  
-
-  
-
-    const removeDeadline = (field: 'submissionDeadlines' | 'presentationDeadlines' | 'resultsDeadlines', index: number) => {
-
-      if (!congressInfo || !congressInfo.editalDates) return;
-
-      const currentDeadlines = [...(congressInfo.editalDates[field] || [])];
-
-      currentDeadlines.splice(index, 1);
-
-      setCongressInfo(prev => ({
-
-        ...prev!,
-
-        editalDates: {
-
-          ...(prev!.editalDates || {}),
-
-          [field]: currentDeadlines,
-
-        },
-
-      }));
-
-    };
-
-  
-
-    const handleFileUpload = async (file: File, templateType: keyof NonNullable<Congress['templateUrls']>) => {
-
-      if (!congressInfo) return;
-
-  
-
-      let currentCongressId = congressInfo.id;
-
-  
-
-      if (isCreating) {
-
-        toast.loading('Salvando congresso antes de fazer upload...', { id: 'saving-congress' });
-
-        try {
-
-          const response = await fetch('/api/congresses', {
-
-            method: 'POST',
-
-            headers: { 'Content-Type': 'application/json' },
-
-            body: JSON.stringify(congressInfo),
-
-          });
-
-  
-
-          if (!response.ok) {
-
-            const errorBody = await response.json();
-
-            throw new Error(errorBody.message || 'Failed to save congress before upload');
-
-          }
-
-  
-
-          const savedCongress = await response.json();
-
-          currentCongressId = savedCongress.id;
-
-          setCongresses(prev => [...prev, savedCongress]);
-
-          setSelectedCongress(savedCongress.id);
-
-          setCongressInfo(savedCongress);
-
-          setIsCreating(false);
-
-          toast.success('Congresso salvo com sucesso!', { id: 'saving-congress' });
-
-        } catch (error) {
-
-          const errorMessage = error instanceof Error ? error.message : 'Erro ao salvar o congresso antes do upload.';
-
-          toast.error(`Erro: ${errorMessage}`, { id: 'saving-congress' });
-
-          return;
-
-        }
+        publicationDate: undefined,
 
       }
 
-  
+    };
 
-      const formData = new FormData();
 
-      formData.append('file', file);
 
-      formData.append('congressId', currentCongressId);
+    setCongressInfo(newCongress);
 
-      formData.append('templateType', templateType);
+    setSelectedCongress(newId);
 
-  
+    setIsEditing(true);
+
+    setIsCreating(true);
+
+  };
+
+
+
+  const addFAQ = () => {
+
+    if (!congressInfo) return;
+
+    const newFAQ: FAQItem = { question: 'Nova pergunta?', answer: 'Nova resposta.' };
+
+    setCongressInfo({ ...congressInfo, faq: [...congressInfo.faq, newFAQ] });
+
+  };
+
+
+
+  const updateFAQ = (index: number, updatedFAQ: Partial<FAQItem>) => {
+
+    if (!congressInfo) return;
+
+    const newFAQ = [...congressInfo.faq];
+
+    newFAQ[index] = { ...newFAQ[index], ...updatedFAQ };
+
+    setCongressInfo({ ...congressInfo, faq: newFAQ });
+
+  };
+
+
+
+  const removeFAQ = (index: number) => {
+
+    if (!congressInfo) return;
+
+    const newFAQ = congressInfo.faq.filter((_, i) => i !== index);
+
+    setCongressInfo({ ...congressInfo, faq: newFAQ });
+
+  };
+
+
+
+  const addEditalSection = () => {
+
+    if (!congressInfo) return;
+
+    const newSection = { id: Date.now().toString(), title: 'Nova Seção', content: 'Conteúdo da nova seção.' };
+
+    setCongressInfo({ ...congressInfo, editalSections: [...(congressInfo.editalSections || []), newSection] });
+
+  };
+
+
+
+  const updateEditalSection = (id: string, updatedSection: Partial<EditalSection>) => {
+
+    if (!congressInfo || !congressInfo.editalSections) return;
+
+    setCongressInfo({
+
+      ...congressInfo,
+
+      editalSections: congressInfo.editalSections.map(section =>
+
+        section.id === id ? { ...section, ...updatedSection } : section
+
+      ),
+
+    });
+
+  };
+
+
+
+  const removeEditalSection = (id: string) => {
+
+    if (!congressInfo || !congressInfo.editalSections) return;
+
+    setCongressInfo({
+
+      ...congressInfo,
+
+      editalSections: congressInfo.editalSections.filter(section => section.id !== id),
+
+    });
+
+  };
+
+
+
+  const handleDateChange = (field: keyof NonNullable<Congress['editalDates']>, value: string) => {
+
+    if (!congressInfo) return;
+
+    setCongressInfo(prev => ({
+
+      ...prev!,
+
+      editalDates: {
+
+        ...(prev!.editalDates || {}),
+
+        [field]: value,
+
+      },
+
+    }));
+
+  };
+
+
+
+  const addDeadline = (field: 'submissionDeadlines' | 'presentationDeadlines' | 'resultsDeadlines') => {
+
+    if (!congressInfo) return;
+
+    const newDeadline: Deadline = {
+
+      id: `deadline-${Date.now()}`,
+
+      name: 'Novo Prazo',
+
+      date: new Date().toISOString().split('T')[0],
+
+      time: '23:59',
+
+    };
+
+    const currentDeadlines = congressInfo.editalDates?.[field] || [];
+
+    setCongressInfo(prev => ({
+
+      ...prev!,
+
+      editalDates: {
+
+        ...(prev!.editalDates || {}),
+
+        [field]: [...currentDeadlines, newDeadline],
+
+      },
+
+    }));
+
+  };
+
+
+
+  const updateDeadline = (field: 'submissionDeadlines' | 'presentationDeadlines' | 'resultsDeadlines', index: number, updatedDeadline: Partial<Deadline>) => {
+
+    if (!congressInfo || !congressInfo.editalDates) return;
+
+    const currentDeadlines = [...(congressInfo.editalDates[field] || [])];
+
+    currentDeadlines[index] = { ...currentDeadlines[index], ...updatedDeadline };
+
+    setCongressInfo(prev => ({
+
+      ...prev!,
+
+      editalDates: {
+
+        ...(prev!.editalDates || {}),
+
+        [field]: currentDeadlines,
+
+      },
+
+    }));
+
+  };
+
+
+
+
+
+  const removeDeadline = (field: 'submissionDeadlines' | 'presentationDeadlines' | 'resultsDeadlines', index: number) => {
+
+    if (!congressInfo || !congressInfo.editalDates) return;
+
+    const currentDeadlines = [...(congressInfo.editalDates[field] || [])];
+
+    currentDeadlines.splice(index, 1);
+
+    setCongressInfo(prev => ({
+
+      ...prev!,
+
+      editalDates: {
+
+        ...(prev!.editalDates || {}),
+
+        [field]: currentDeadlines,
+
+      },
+
+    }));
+
+  };
+
+
+
+  const handleFileUpload = async (file: File, templateType: keyof NonNullable<Congress['templateUrls']>) => {
+
+    if (!congressInfo) return;
+
+
+
+    let currentCongressId = congressInfo.id;
+
+
+
+    if (isCreating) {
+
+      toast.loading('Salvando congresso antes de fazer upload...', { id: 'saving-congress' });
 
       try {
 
-          toast.loading('Fazendo upload do arquivo...', { id: 'uploading-file' });
+        const response = await fetch('/api/congresses', {
 
-          const response = await fetch('/api/upload', {
+          method: 'POST',
 
-              method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
 
-              body: formData,
+          body: JSON.stringify(congressInfo),
 
-          });
+        });
 
-  
 
-          if (!response.ok) {
 
-              throw new Error('Falha no upload do arquivo.');
+        if (!response.ok) {
 
-          }
+          const errorBody = await response.json();
 
-  
+          throw new Error(errorBody.message || 'Failed to save congress before upload');
 
-          const { congress: updatedCongress } = await response.json();
+        }
 
-  
 
-          setCongressInfo(updatedCongress);
 
-          setCongresses(prev => prev.map(c => c.id === updatedCongress.id ? updatedCongress : c));
+        const savedCongress = await response.json();
 
-  
+        currentCongressId = savedCongress.id;
 
-          toast.success(`Template ${templateType} carregado com sucesso!`, { id: 'uploading-file' });
+        setCongresses(prev => [...prev, savedCongress]);
+
+        setSelectedCongress(savedCongress.id);
+
+        setCongressInfo(savedCongress);
+
+        setIsCreating(false);
+
+        toast.success('Congresso salvo com sucesso!', { id: 'saving-congress' });
 
       } catch (error) {
 
-          toast.error('Erro ao fazer upload do template.', { id: 'uploading-file' });
+        const errorMessage = error instanceof Error ? error.message : 'Erro ao salvar o congresso antes do upload.';
 
-          console.error(error);
+        toast.error(`Erro: ${errorMessage}`, { id: 'saving-congress' });
+
+        return;
 
       }
 
-    };
+    }
 
-  
 
-    return (
 
-      <div className="min-h-screen bg-gray-50">
+    const formData = new FormData();
 
-        <div className="bg-white shadow-sm border-b">
+    formData.append('file', file);
 
-          <div className="max-w-7xl mx-auto px-4 py-4">
+    formData.append('congressId', currentCongressId);
 
-            <div className="flex justify-between items-center">
+    formData.append('templateType', templateType);
 
-              <h1 className="text-2xl font-bold text-gray-900">Painel Administrativo - Editais</h1>
 
-              <div className="flex gap-4">
 
-                <Link href="/admin/analytics" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Ver Métricas</Link>
+    try {
 
-                <button onClick={handleCreateNew} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">+ Novo Edital</button>
+      toast.loading('Fazendo upload do arquivo...', { id: 'uploading-file' });
 
-                {congressInfo && !isCreating && (
+      const response = await fetch('/api/upload', {
 
-                  <button onClick={() => setIsEditing(!isEditing)} className={`px-4 py-2 rounded-lg transition-colors ${isEditing ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
+        method: 'POST',
 
-                    {isEditing ? 'Cancelar' : 'Editar'}
+        body: formData,
 
-                  </button>
+      });
 
-                )}
 
-                {isEditing && congressInfo && (
 
-                  <button onClick={handleSave} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Salvar</button>
+      if (!response.ok) {
 
-                )}
+        throw new Error('Falha no upload do arquivo.');
 
-              </div>
+      }
 
-            </div>
 
-          </div>
 
-        </div>
+      const { congress: updatedCongress } = await response.json();
 
-  
 
-        <div className="max-w-7xl mx-auto px-4 py-8">
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      setCongressInfo(updatedCongress);
 
-            <div className="lg:col-span-1">
+      setCongresses(prev => prev.map(c => c.id === updatedCongress.id ? updatedCongress : c));
 
-              <div className="bg-white rounded-lg shadow p-6">
 
-                <h2 className="text-lg text-gray-900 font-semibold mb-4">Editais de Congresso</h2>
 
-                <div className="space-y-2">
+      toast.success(`Template ${templateType} carregado com sucesso!`, { id: 'uploading-file' });
 
-                  {isLoading ? (
+    } catch (error) {
 
-                    <CongressListSkeleton />
+      toast.error('Erro ao fazer upload do template.', { id: 'uploading-file' });
 
-                  ) : (
+      console.error(error);
 
-                    congresses.map((congress) => (
+    }
 
-                      <div key={congress.id} className="flex items-center gap-1">
+  };
 
-                        <button onClick={() => setSelectedCongress(congress.id)} className={`w-full text-left p-3 rounded-lg transition-colors ${selectedCongress === congress.id ? 'bg-blue-50 border-2 border-blue-200' : 'hover:bg-gray-50 border-2 border-transparent'}`}>
 
-                          <div className="font-medium text-gray-900">{congress.title}</div>
 
-                          <div className="text-sm text-gray-500">{congress.date}</div>
+  return (
 
-                        </button>
+    <div className="min-h-screen bg-gray-50">
 
-                        <div className="flex items-center">
+      <div className="bg-white shadow-sm border-b">
 
-                          <button onClick={() => handleDuplicate(congress.id)} className="p-2 text-gray-500 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors" title="Duplicar edital">
+        <div className="max-w-7xl mx-auto px-4 py-4">
 
-                            <Copy className="w-4 h-4" />
+          <div className="flex justify-between items-center">
 
-                          </button>
+            <h1 className="text-2xl font-bold text-gray-900">Painel Administrativo - Editais</h1>
 
-                          <button onClick={() => handleCopyLink(congress.slug)} className="p-2 text-gray-500 hover:text-blue-700 hover:bg-blue-100 rounded-full transition-colors" title="Copiar link do edital">
+            <div className="flex gap-4">
 
-                            <LinkIcon className="w-4 h-4" />
+              <Link href="/admin/analytics" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Ver Métricas</Link>
 
-                          </button>
+              <button onClick={handleCreateNew} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">+ Novo Edital</button>
 
-                          <button onClick={() => handleDelete(congress.id)} className="p-2 text-gray-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors" title="Apagar edital">
+              {congressInfo && !isCreating && (
 
-                            <Trash2 className="w-4 h-4" />
+                <button onClick={() => setIsEditing(!isEditing)} className={`px-4 py-2 rounded-lg transition-colors ${isEditing ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
 
-                          </button>
+                  {isEditing ? 'Cancelar' : 'Editar'}
 
-                        </div>
+                </button>
 
-                      </div>
+              )}
 
-                    ))
+              {isEditing && congressInfo && (
 
-                  )}
-
-                </div>
-
-              </div>
-
-            </div>
-
-  
-
-            <div className="lg:col-span-3">
-
-              {isLoading ? (
-
-                <AdminSkeletonLoader />
-
-              ) : congressInfo ? (
-
-                <div className="bg-white rounded-lg shadow">
-
-                  <div className="border-b">
-
-                    <nav className="flex">
-
-                      {[ { key: 'basic', label: 'Informações Básicas' }, { key: 'colors', label: 'Cores' }, { key: 'templates', label: 'Modelos' }, { key: 'editalSections', label: 'Seções do Edital' }, { key: 'editalDates', label: 'Datas do Edital' }, { key: 'faq', label: 'FAQ' } ].map((tab) => (
-
-                        <button key={tab.key} onClick={() => setActiveTab(tab.key as AdminTab)} className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${activeTab === tab.key ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
-
-                          {tab.label}
-
-                        </button>
-
-                      ))}
-
-                    </nav>
-
-                  </div>
-
-  
-
-                  <div className="p-6">
-
-                    {activeTab === 'basic' && (
-
-                      <div className="space-y-6">
-
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                           <div>
-
-                             <label className="block text-sm font-medium text-gray-700 mb-2">Sigla do Evento</label>
-
-                             <input type="text" value={congressInfo.title} onChange={(e) => { const newTitle = e.target.value; setCongressInfo({ ...congressInfo, title: newTitle, slug: slugify(newTitle) }) }} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                           </div>
-
-                           <div>
-
-                             <label className="block text-sm font-medium text-gray-700 mb-2">Data</label>
-
-                             <input type="text" value={congressInfo.date} onChange={(e) => setCongressInfo({ ...congressInfo, date: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                           </div>
-
-                         </div>
-
-                         <div>
-
-                           <label className="block text-sm font-medium text-gray-700 mb-2">Nome Completo do Evento</label>
-
-                           <input type="text" value={congressInfo.subtitle} onChange={(e) => setCongressInfo({ ...congressInfo, subtitle: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                         </div>
-
-                         <div>
-
-                           <label className="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
-
-                           <textarea value={congressInfo.description} onChange={(e) => setCongressInfo({ ...congressInfo, description: e.target.value })} disabled={!isEditing} rows={4} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                         </div>
-
-                         <div>
-
-                           <label className="block text-sm font-medium text-gray-700 mb-2">Link para Submissão</label>
-
-                           <input
-
-                             type="url"
-
-                             value={congressInfo.submissionUrl || ''}
-
-                             onChange={(e) => setCongressInfo({ ...congressInfo, submissionUrl: e.target.value })}
-
-                             disabled={!isEditing}
-
-                             placeholder="https://plataforma.com/submissao"
-
-                             className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
-
-                           />
-
-                         </div>
-
-                         <div>
-
-                           <label className="block text-sm font-medium text-gray-700 mb-2">Link do edital de capítulo de livro</label>
-
-                           <input
-
-                             type="url"
-
-                             value={congressInfo.bookChapterEditalUrl || ''}
-
-                             onChange={(e) => setCongressInfo({ ...congressInfo, bookChapterEditalUrl: e.target.value })}
-
-                             disabled={!isEditing}
-
-                             placeholder="https://plataforma.com/capitulo-livro"
-
-                             className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
-
-                           />
-
-                         </div>
-
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                           <div>
-
-                             <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-
-                             <input type="email" value={congressInfo.contact.email} onChange={(e) => setCongressInfo({ ...congressInfo, contact: { ...congressInfo.contact, email: e.target.value } })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                           </div>
-
-                           <div>
-
-                             <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
-
-                             <input type="text" value={congressInfo.contact.whatsapp || ''} onChange={(e) => setCongressInfo({ ...congressInfo, contact: { ...congressInfo.contact, whatsapp: e.target.value } })} disabled={!isEditing} placeholder="5511999999999" className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                           </div>
-
-                           <div>
-
-                             <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
-
-                             <input type="text" value={congressInfo.contact.instagram || ''} onChange={(e) => setCongressInfo({ ...congressInfo, contact: { ...congressInfo.contact, instagram: e.target.value } })} disabled={!isEditing} placeholder="@seuinstagram" className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                           </div>
-
-                         </div>
-
-                      </div>
-
-                    )}
-
-  
-
-                    {activeTab === 'colors' && (
-
-                      <div className="space-y-6">
-
-                        <h3 className="text-lg text-gray-900 font-semibold">Configuração de Cores</h3>
-
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-
-                          {Object.entries(congressInfo.colors).map(([colorKey, colorValue]) => (
-
-                            <div key={colorKey}>
-
-                              <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">{colorKey}</label>
-
-                              <div className="flex items-center space-x-3">
-
-                                <input type="color" value={colorValue} onChange={(e) => setCongressInfo({ ...congressInfo, colors: { ...congressInfo.colors, [colorKey]: e.target.value } })} disabled={!isEditing} className="w-12 h-10 border border-gray-300 rounded" />
-
-                                <input type="text" value={colorValue} onChange={(e) => setCongressInfo({ ...congressInfo, colors: { ...congressInfo.colors, [colorKey]: e.target.value } })} disabled={!isEditing} className="flex-1 px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                              </div>
-
-                            </div>
-
-                          ))}
-
-                        </div>
-
-                        <div className="mt-8">
-
-                          <h4 className="text-md text-gray-900 font-semibold mb-4">Preview</h4>
-
-                          <div className="border rounded-lg p-4" style={{ backgroundColor: congressInfo.colors.background }}>
-
-                            <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: congressInfo.colors.primary, color: getContrastingTextColor(congressInfo.colors.primary) }}>
-
-                              <h3 className="text-xl font-bold">Header Primário</h3>
-
-                            </div>
-
-                            <div className="inline-block px-4 py-2 rounded-lg font-semibold mr-4" style={{ backgroundColor: congressInfo.colors.accent, color: getContrastingTextColor(congressInfo.colors.accent) }}>
-
-                              Botão Destaque
-
-                            </div>
-
-                            <p style={{ color: congressInfo.colors.text }} className="mt-4">Texto de exemplo.</p>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    )}
-
-  
-
-                    {activeTab === 'templates' && (
-
-                      <div className="space-y-6">
-
-                        <h3 className="text-lg text-gray-900 font-semibold">Upload de Modelos</h3>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                          {([
-
-                            { type: 'resumoExpandidoComId', label: 'Resumo Expandido (com Identificação)' },
-
-                            { type: 'resumoExpandidoSemId', label: 'Resumo Expandido (sem Identificação)' },
-
-                            { type: 'apresentacaoOral', label: 'Apresentação Oral' },
-
-                            { type: 'eBanner', label: 'e-Banner' },
-
-                          ] as const).map(({ type, label }) => (
-
-                            <div key={type} className={`border rounded-lg p-4 transition-colors ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}>
-
-                              <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-
-                              {isEditing ? (
-
-                                <>
-
-                                  <input
-
-                                    type="file"
-
-                                    onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], type)}
-
-                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-
-                                  />
-
-                                  {congressInfo.templateUrls?.[type] && (
-
-                                    <div className="mt-2">
-
-                                      <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-
-                                        Ver arquivo atual
-
-                                      </a>
-
-                                    </div>
-
-                                  )}
-
-                                </>
-
-                              ) : (
-
-                                congressInfo.templateUrls?.[type] ? (
-
-                                  <div className="mt-2">
-
-                                    <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-
-                                      Ver arquivo
-
-                                    </a>
-
-                                  </div>
-
-                                ) : (
-
-                                  <p className="text-sm text-gray-500 mt-2">Nenhum modelo carregado.</p>
-
-                                )
-
-                              )}
-
-                            </div>
-
-                          ))}
-
-                        </div>
-
-                      </div>
-
-                    )}
-
-  
-
-                    {activeTab === 'editalSections' && (
-
-                      <div className="space-y-6">
-
-                        <div className="flex justify-between items-center">
-
-                          <h3 className="text-lg font-semibold text-gray-900">Seções do Edital</h3>
-
-                          {isEditing && (
-
-                            <button onClick={addEditalSection} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-
-                              + Adicionar Seção
-
-                            </button>
-
-                          )}
-
-                        </div>
-
-                        <div className="space-y-4">
-
-                          {congressInfo.editalSections?.map((section) => (
-
-                            <div key={section.id} className="border rounded-lg p-4">
-
-                              <div className="flex justify-between items-center mb-4">
-
-                                <h4 className="font-semibold text-gray-900">Seção {section.title}</h4>
-
-                                {isEditing && (
-
-                                  <button onClick={() => removeEditalSection(section.id)} className="text-red-600 hover:text-red-800">
-
-                                    Remover
-
-                                  </button>
-
-                                )}
-
-                              </div>
-
-                              <div className="space-y-4">
-
-                                <div>
-
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-
-                                  <input
-
-                                    type="text"
-
-                                    value={section.title}
-
-                                    onChange={(e) => updateEditalSection(section.id, { title: e.target.value })}
-
-                                    disabled={!isEditing}
-
-                                    className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
-
-                                  />
-
-                                </div>
-
-                                <div>
-
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Conteúdo</label>
-
-                                  <TiptapEditor
-
-                                    content={section.content}
-
-                                    onChange={(newContent: string) => updateEditalSection(section.id, { content: newContent })}
-
-                                    isEditing={isEditing}
-
-                                  />
-
-                                </div>
-
-                              </div>
-
-                            </div>
-
-                          ))}
-
-                        </div>
-
-                      </div>
-
-                    )}
-
-  
-
-                    {activeTab === 'editalDates' && (
-
-                      <div className="space-y-6">
-
-                        <h3 className="text-lg font-semibold text-gray-900">Datas do Edital</h3>
-
-                        
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                          <div className="border rounded-lg p-4">
-
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Data de Abertura do Edital</label>
-
-                            <input
-
-                              type="date"
-
-                              value={congressInfo.editalDates?.openingDate || ''}
-
-                              onChange={(e) => handleDateChange('openingDate', e.target.value)}
-
-                              disabled={!isEditing}
-
-                              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
-
-                            />
-
-                          </div>
-
-                          <div className="border rounded-lg p-4">
-
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Data de Publicação dos Anais</label>
-
-                            <input
-
-                              type="date"
-
-                              value={congressInfo.editalDates?.publicationDate || ''}
-
-                              onChange={(e) => handleDateChange('publicationDate', e.target.value)}
-
-                              disabled={!isEditing}
-
-                              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
-
-                            />
-
-                          </div>
-
-                        </div>
-
-  
-
-                        <DeadlineSection
-
-                          title="Prazos Finais para Submissão"
-
-                          deadlines={congressInfo.editalDates?.submissionDeadlines || []}
-
-                          onAdd={() => addDeadline('submissionDeadlines')}
-
-                          onUpdate={(index, updatedField) => updateDeadline('submissionDeadlines', index, updatedField)}
-
-                          onRemove={(index) => removeDeadline('submissionDeadlines', index)}
-
-                          isEditing={isEditing}
-
-                        />
-
-                        
-
-                        <DeadlineSection
-
-                          title="Prazos para Envio das Apresentações"
-
-                          deadlines={congressInfo.editalDates?.presentationDeadlines || []}
-
-                          onAdd={() => addDeadline('presentationDeadlines')}
-
-                          onUpdate={(index, updatedField) => updateDeadline('presentationDeadlines', index, updatedField)}
-
-                          onRemove={(index) => removeDeadline('presentationDeadlines', index)}
-
-                          isEditing={isEditing}
-
-                        />
-
-  
-
-                        <DeadlineSection
-
-                          title="Prazos dos Resultados de Submissão"
-
-                          deadlines={congressInfo.editalDates?.resultsDeadlines || []}
-
-                          onAdd={() => addDeadline('resultsDeadlines')}
-
-                          onUpdate={(index, updatedField) => updateDeadline('resultsDeadlines', index, updatedField)}
-
-                          onRemove={(index) => removeDeadline('resultsDeadlines', index)}
-
-                          isEditing={isEditing}
-
-                        />
-
-                      </div>
-
-                    )}
-
-  
-
-  
-
-                    {activeTab === 'faq' && (
-
-                      <div className="space-y-6">
-
-                        <div className="flex justify-between items-center">
-
-                          <h3 className="text-lg text-gray-900 font-semibold">Perguntas Frequentes</h3>
-
-                          {isEditing && (
-
-                            <button onClick={addFAQ} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">+ Adicionar FAQ</button>
-
-                          )}
-
-                        </div>
-
-                        <div className="space-y-4">
-
-                          {congressInfo.faq.map((faqItem, index) => (
-
-                            <div key={index} className="border rounded-lg p-4">
-
-                              <div className="flex justify-between items-center mb-4">
-
-                                <h4 className="font-semibold text-gray-900">FAQ {index + 1}</h4>
-
-                                {isEditing && (
-
-                                  <button onClick={() => removeFAQ(index)} className="text-red-600 hover:text-red-800">Remover</button>
-
-                                )}
-
-                              </div>
-
-                              <div className="space-y-4">
-
-                                <div>
-
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Pergunta</label>
-
-                                  <input type="text" value={faqItem.question} onChange={(e) => updateFAQ(index, { ...faqItem, question: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                                </div>
-
-                                <div>
-
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Resposta</label>
-
-                                  <textarea value={faqItem.answer} onChange={(e) => updateFAQ(index, { ...faqItem, answer: e.target.value })} disabled={!isEditing} rows={3} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
-
-                                </div>
-
-                              </div>
-
-                            </div>
-
-                          ))}
-
-                        </div>
-
-                      </div>
-
-                    )}
-
-                  </div>
-
-                </div>
-
-              ) : (
-
-                <div className="bg-white rounded-lg shadow p-8 text-center">
-
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4">Selecione um edital para editar</h2>
-
-                  <p className="text-gray-500">Escolha um edital da lista ao lado ou crie um novo.</p>
-
-                </div>
+                <button onClick={handleSave} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Salvar</button>
 
               )}
 
@@ -1392,8 +732,663 @@ export default function AdminPage() {
 
       </div>
 
-    );
 
-  }
 
-  
+      <div className="max-w-7xl mx-auto px-4 py-8">
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+          <div className="lg:col-span-1">
+
+            <div className="bg-white rounded-lg shadow p-6">
+
+              <h2 className="text-lg text-gray-900 font-semibold mb-4">Editais de Congresso</h2>
+
+              <div className="space-y-2">
+
+                {isLoading ? (
+
+                  <CongressListSkeleton />
+
+                ) : (
+
+                  congresses.map((congress) => (
+
+                    <div key={congress.id} className="flex items-center gap-1">
+
+                      <button onClick={() => setSelectedCongress(congress.id)} className={`w-full text-left p-3 rounded-lg transition-colors ${selectedCongress === congress.id ? 'bg-blue-50 border-2 border-blue-200' : 'hover:bg-gray-50 border-2 border-transparent'}`}>
+
+                        <div className="font-medium text-gray-900">{congress.title}</div>
+
+                        <div className="text-sm text-gray-500">{congress.date}</div>
+
+                      </button>
+
+                      <div className="flex items-center">
+
+                        <button onClick={() => handleDuplicate(congress.id)} className="p-2 text-gray-500 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors" title="Duplicar edital">
+
+                          <Copy className="w-4 h-4" />
+
+                        </button>
+
+                        <button onClick={() => handleCopyLink(congress.slug)} className="p-2 text-gray-500 hover:text-blue-700 hover:bg-blue-100 rounded-full transition-colors" title="Copiar link do edital">
+
+                          <LinkIcon className="w-4 h-4" />
+
+                        </button>
+
+                        <button onClick={() => handleDelete(congress.id)} className="p-2 text-gray-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors" title="Apagar edital">
+
+                          <Trash2 className="w-4 h-4" />
+
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  ))
+
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <div className="lg:col-span-3">
+
+            {isLoading ? (
+
+              <AdminSkeletonLoader />
+
+            ) : congressInfo ? (
+
+              <div className="bg-white rounded-lg shadow">
+
+                <div className="border-b">
+
+                  <nav className="flex">
+
+                    {[{ key: 'basic', label: 'Informações Básicas' }, { key: 'colors', label: 'Cores' }, { key: 'templates', label: 'Modelos' }, { key: 'editalSections', label: 'Seções do Edital' }, { key: 'editalDates', label: 'Datas do Edital' }, { key: 'faq', label: 'FAQ' }].map((tab) => (
+
+                      <button key={tab.key} onClick={() => setActiveTab(tab.key as AdminTab)} className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${activeTab === tab.key ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+
+                        {tab.label}
+
+                      </button>
+
+                    ))}
+
+                  </nav>
+
+                </div>
+
+
+
+                <div className="p-6">
+
+                  {activeTab === 'basic' && (
+
+                    <div className="space-y-6">
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <div>
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Sigla do Evento</label>
+
+                          <input type="text" value={congressInfo.title} onChange={(e) => { const newTitle = e.target.value; setCongressInfo({ ...congressInfo, title: newTitle, slug: slugify(newTitle) }) }} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                        </div>
+
+                        <div>
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Data</label>
+
+                          <input type="text" value={congressInfo.date} onChange={(e) => setCongressInfo({ ...congressInfo, date: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                        </div>
+
+                      </div>
+
+                      <div>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Nome Completo do Evento</label>
+
+                        <input type="text" value={congressInfo.subtitle} onChange={(e) => setCongressInfo({ ...congressInfo, subtitle: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                      </div>
+
+                      <div>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+
+                        <textarea value={congressInfo.description} onChange={(e) => setCongressInfo({ ...congressInfo, description: e.target.value })} disabled={!isEditing} rows={4} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                      </div>
+
+                      <div>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Link para Submissão</label>
+
+                        <input
+
+                          type="url"
+
+                          value={congressInfo.submissionUrl || ''}
+
+                          onChange={(e) => setCongressInfo({ ...congressInfo, submissionUrl: e.target.value })}
+
+                          disabled={!isEditing}
+
+                          placeholder="https://plataforma.com/submissao"
+
+                          className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+
+                        />
+
+                      </div>
+
+                      <div>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Link do edital de capítulo de livro</label>
+
+                        <input
+
+                          type="url"
+
+                          value={congressInfo.bookChapterEditalUrl || ''}
+
+                          onChange={(e) => setCongressInfo({ ...congressInfo, bookChapterEditalUrl: e.target.value })}
+
+                          disabled={!isEditing}
+
+                          placeholder="https://plataforma.com/capitulo-livro"
+
+                          className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+
+                        />
+
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                        <div>
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+
+                          <input type="email" value={congressInfo.contact.email} onChange={(e) => setCongressInfo({ ...congressInfo, contact: { ...congressInfo.contact, email: e.target.value } })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                        </div>
+
+                        <div>
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+
+                          <input type="text" value={congressInfo.contact.whatsapp || ''} onChange={(e) => setCongressInfo({ ...congressInfo, contact: { ...congressInfo.contact, whatsapp: e.target.value } })} disabled={!isEditing} placeholder="5511999999999" className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                        </div>
+
+                        <div>
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+
+                          <input type="text" value={congressInfo.contact.instagram || ''} onChange={(e) => setCongressInfo({ ...congressInfo, contact: { ...congressInfo.contact, instagram: e.target.value } })} disabled={!isEditing} placeholder="@seuinstagram" className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+
+
+                  {activeTab === 'colors' && (
+
+                    <div className="space-y-6">
+
+                      <h3 className="text-lg text-gray-900 font-semibold">Configuração de Cores</h3>
+
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+
+                        {Object.entries(congressInfo.colors).map(([colorKey, colorValue]) => (
+
+                          <div key={colorKey}>
+
+                            <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">{colorKey}</label>
+
+                            <div className="flex items-center space-x-3">
+
+                              <input type="color" value={colorValue} onChange={(e) => setCongressInfo({ ...congressInfo, colors: { ...congressInfo.colors, [colorKey]: e.target.value } })} disabled={!isEditing} className="w-12 h-10 border border-gray-300 rounded" />
+
+                              <input type="text" value={colorValue} onChange={(e) => setCongressInfo({ ...congressInfo, colors: { ...congressInfo.colors, [colorKey]: e.target.value } })} disabled={!isEditing} className="flex-1 px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                            </div>
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+                      <div className="mt-8">
+
+                        <h4 className="text-md text-gray-900 font-semibold mb-4">Preview</h4>
+
+                        <div className="border rounded-lg p-4" style={{ backgroundColor: congressInfo.colors.background }}>
+
+                          <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: congressInfo.colors.primary, color: getContrastingTextColor(congressInfo.colors.primary) }}>
+
+                            <h3 className="text-xl font-bold">Header Primário</h3>
+
+                          </div>
+
+                          <div className="inline-block px-4 py-2 rounded-lg font-semibold mr-4" style={{ backgroundColor: congressInfo.colors.accent, color: getContrastingTextColor(congressInfo.colors.accent) }}>
+
+                            Botão Destaque
+
+                          </div>
+
+                          <p style={{ color: congressInfo.colors.text }} className="mt-4">Texto de exemplo.</p>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+
+
+                  {activeTab === 'templates' && (
+
+                    <div className="space-y-6">
+
+                      <h3 className="text-lg text-gray-900 font-semibold">Upload de Modelos</h3>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        {([
+
+                          { type: 'resumoExpandidoComId', label: 'Resumo Expandido (com Identificação)' },
+
+                          { type: 'resumoExpandidoSemId', label: 'Resumo Expandido (sem Identificação)' },
+
+                          { type: 'apresentacaoOral', label: 'Apresentação Oral' },
+
+                          { type: 'eBanner', label: 'e-Banner' },
+
+                        ] as const).map(({ type, label }) => (
+
+                          <div key={type} className={`border rounded-lg p-4 transition-colors ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}>
+
+                            <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+
+                            {isEditing ? (
+
+                              <>
+
+                                <input
+
+                                  type="file"
+
+                                  onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], type)}
+
+                                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+
+                                />
+
+                                {congressInfo.templateUrls?.[type] && (
+
+                                  <div className="mt-2">
+
+                                    <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+
+                                      Ver arquivo atual
+
+                                    </a>
+
+                                  </div>
+
+                                )}
+
+                              </>
+
+                            ) : (
+
+                              congressInfo.templateUrls?.[type] ? (
+
+                                <div className="mt-2">
+
+                                  <a href={congressInfo.templateUrls[type]} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+
+                                    Ver arquivo
+
+                                  </a>
+
+                                </div>
+
+                              ) : (
+
+                                <p className="text-sm text-gray-500 mt-2">Nenhum modelo carregado.</p>
+
+                              )
+
+                            )}
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+
+
+                  {activeTab === 'editalSections' && (
+
+                    <div className="space-y-6">
+
+                      <div className="flex justify-between items-center">
+
+                        <h3 className="text-lg font-semibold text-gray-900">Seções do Edital</h3>
+
+                        {isEditing && (
+
+                          <button onClick={addEditalSection} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+
+                            + Adicionar Seção
+
+                          </button>
+
+                        )}
+
+                      </div>
+
+                      <div className="space-y-4">
+
+                        {congressInfo.editalSections?.map((section) => (
+
+                          <div key={section.id} className="border rounded-lg p-4">
+
+                            <div className="flex justify-between items-center mb-4">
+
+                              <h4 className="font-semibold text-gray-900">Seção {section.title}</h4>
+
+                              {isEditing && (
+
+                                <button onClick={() => removeEditalSection(section.id)} className="text-red-600 hover:text-red-800">
+
+                                  Remover
+
+                                </button>
+
+                              )}
+
+                            </div>
+
+                            <div className="space-y-4">
+
+                              <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
+
+                                <input
+
+                                  type="text"
+
+                                  value={section.title}
+
+                                  onChange={(e) => updateEditalSection(section.id, { title: e.target.value })}
+
+                                  disabled={!isEditing}
+
+                                  className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+
+                                />
+
+                              </div>
+
+                              <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Conteúdo</label>
+
+                                <TiptapEditor
+
+                                  content={section.content}
+
+                                  onChange={(newContent: string) => updateEditalSection(section.id, { content: newContent })}
+
+                                  isEditing={isEditing}
+
+                                />
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+
+
+                  {activeTab === 'editalDates' && (
+
+                    <div className="space-y-6">
+
+                      <h3 className="text-lg font-semibold text-gray-900">Datas do Edital</h3>
+
+
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <div className="border rounded-lg p-4">
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Data de Abertura do Edital</label>
+
+                          <input
+
+                            type="date"
+
+                            value={congressInfo.editalDates?.openingDate || ''}
+
+                            onChange={(e) => handleDateChange('openingDate', e.target.value)}
+
+                            disabled={!isEditing}
+
+                            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+
+                          />
+
+                        </div>
+
+                        <div className="border rounded-lg p-4">
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Data de Publicação dos Anais</label>
+
+                          <input
+
+                            type="date"
+
+                            value={congressInfo.editalDates?.publicationDate || ''}
+
+                            onChange={(e) => handleDateChange('publicationDate', e.target.value)}
+
+                            disabled={!isEditing}
+
+                            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+
+                          />
+
+                        </div>
+
+                      </div>
+
+
+
+                      <DeadlineSection
+
+                        title="Prazos Finais para Submissão"
+
+                        deadlines={congressInfo.editalDates?.submissionDeadlines || []}
+
+                        onAdd={() => addDeadline('submissionDeadlines')}
+
+                        onUpdate={(index, updatedField) => updateDeadline('submissionDeadlines', index, updatedField)}
+
+                        onRemove={(index) => removeDeadline('submissionDeadlines', index)}
+
+                        isEditing={isEditing}
+
+                      />
+
+                      <DeadlineSection
+
+                        title="Prazos dos Resultados de Submissão"
+
+                        deadlines={congressInfo.editalDates?.resultsDeadlines || []}
+
+                        onAdd={() => addDeadline('resultsDeadlines')}
+
+                        onUpdate={(index, updatedField) => updateDeadline('resultsDeadlines', index, updatedField)}
+
+                        onRemove={(index) => removeDeadline('resultsDeadlines', index)}
+
+                        isEditing={isEditing}
+
+                      />
+
+                      <DeadlineSection
+
+                        title="Prazos para Envio das Apresentações"
+
+                        deadlines={congressInfo.editalDates?.presentationDeadlines || []}
+
+                        onAdd={() => addDeadline('presentationDeadlines')}
+
+                        onUpdate={(index, updatedField) => updateDeadline('presentationDeadlines', index, updatedField)}
+
+                        onRemove={(index) => removeDeadline('presentationDeadlines', index)}
+
+                        isEditing={isEditing}
+
+                      />
+
+                    </div>
+
+                  )}
+
+
+
+
+
+                  {activeTab === 'faq' && (
+
+                    <div className="space-y-6">
+
+                      <div className="flex justify-between items-center">
+
+                        <h3 className="text-lg text-gray-900 font-semibold">Perguntas Frequentes</h3>
+
+                        {isEditing && (
+
+                          <button onClick={addFAQ} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">+ Adicionar FAQ</button>
+
+                        )}
+
+                      </div>
+
+                      <div className="space-y-4">
+
+                        {congressInfo.faq.map((faqItem, index) => (
+
+                          <div key={index} className="border rounded-lg p-4">
+
+                            <div className="flex justify-between items-center mb-4">
+
+                              <h4 className="font-semibold text-gray-900">FAQ {index + 1}</h4>
+
+                              {isEditing && (
+
+                                <button onClick={() => removeFAQ(index)} className="text-red-600 hover:text-red-800">Remover</button>
+
+                              )}
+
+                            </div>
+
+                            <div className="space-y-4">
+
+                              <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Pergunta</label>
+
+                                <input type="text" value={faqItem.question} onChange={(e) => updateFAQ(index, { ...faqItem, question: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                              </div>
+
+                              <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Resposta</label>
+
+                                <textarea value={faqItem.answer} onChange={(e) => updateFAQ(index, { ...faqItem, answer: e.target.value })} disabled={!isEditing} rows={3} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+                </div>
+
+              </div>
+
+            ) : (
+
+              <div className="bg-white rounded-lg shadow p-8 text-center">
+
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">Selecione um edital para editar</h2>
+
+                <p className="text-gray-500">Escolha um edital da lista ao lado ou crie um novo.</p>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
+
+}
+
