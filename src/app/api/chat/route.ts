@@ -1,5 +1,46 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { CongressData } from "../../../../types/congress";
+import * as mammoth from 'mammoth';
+
+async function fetchAndParseFile(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`Failed to fetch file: ${url}`);
+      return '';
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const contentType = response.headers.get('content-type') || '';
+    const lowerUrl = url.toLowerCase();
+
+    if (contentType.includes('pdf') || lowerUrl.endsWith('.pdf')) {
+      // Dynamic import to avoid build warnings with CommonJS module
+      const pdfModule = await import('pdf-parse');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pdfParse = (pdfModule as any).default || pdfModule;
+      const data = await pdfParse(buffer);
+      return `\n--- CONTEÚDO DO ARQUIVO (${url.split('/').pop()}) ---\n${data.text}\n`;
+    } else if (
+      contentType.includes('wordprocessingml') ||
+      lowerUrl.endsWith('.docx') ||
+      lowerUrl.endsWith('.doc') // mammoth handles some .doc, mostly .docx
+    ) {
+      const result = await mammoth.extractRawText({ buffer });
+      return `\n--- CONTEÚDO DO ARQUIVO (${url.split('/').pop()}) ---\n${result.value}\n`;
+    } else if (contentType.includes('text') || lowerUrl.endsWith('.txt')) {
+      await response.text(); // Re-read as text (or just decode buffer)
+      // utilizing the already read buffer:
+      return `\n--- CONTEÚDO DO ARQUIVO (${url.split('/').pop()}) ---\n${buffer.toString('utf-8')}\n`;
+    }
+
+    return '';
+  } catch (error) {
+    console.error(`Error parsing file ${url}:`, error);
+    return '';
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +53,14 @@ export async function POST(req: Request) {
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    // --- Load Knowledge Base Files ---
+    let knowledgeBaseContent = '';
+    if (congress.trainingFileUrls && congress.trainingFileUrls.length > 0) {
+      const filePromises = congress.trainingFileUrls.map(url => fetchAndParseFile(url));
+      const fileContents = await Promise.all(filePromises);
+      knowledgeBaseContent = fileContents.join('\n');
+    }
 
     const systemPrompt = `
       Você é um assistente virtual útil e amigável para o congresso "${congress.title}".
@@ -45,6 +94,11 @@ export async function POST(req: Request) {
       ${congress.trainingData ? `
       INSTRUÇÕES ADICIONAIS DE TREINAMENTO:
       ${congress.trainingData}
+      ` : ''}
+
+      ${knowledgeBaseContent ? `
+      CONTEÚDO DOS ARQUIVOS DE CONHECIMENTO (Priorize estas informações):
+      ${knowledgeBaseContent}
       ` : ''}
       
       DIRETRIZES DE RESPOSTA:
