@@ -36,6 +36,7 @@ interface Congress {
   bookChapterEditalUrl?: string;
   isChatEnabled?: boolean;
   trainingData?: string;
+  trainingFileUrls?: string[];
   colors: {
     primary: string;
     secondary: string;
@@ -834,23 +835,97 @@ export default function AdminPage() {
 
                 <div className="p-6">
                   {activeTab === 'training' && (
-                     <div className="space-y-6">
-                        <div>
-                           <label className="block text-sm font-medium text-gray-700 mb-2">Dados de Treinamento da IA</label>
-                           <p className="text-sm text-gray-500 mb-4">
-                              Insira aqui informações adicionais, regras específicas ou contexto extra que o assistente virtual deve saber sobre este evento. 
-                              Essas informações serão usadas para instruir a IA em como responder às dúvidas dos participantes.
-                           </p>
-                           <textarea
-                              value={congressInfo.trainingData || ''}
-                              onChange={(e) => setCongressInfo({ ...congressInfo, trainingData: e.target.value })}
-                              disabled={!isEditing}
-                              rows={15}
-                              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50 font-mono text-sm"
-                              placeholder="Exemplo: O evento terá certificado de 20 horas. O credenciamento começa às 08:00 todos os dias. Não haverá transmissão online..."
-                           />
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Dados de Treinamento da IA</label>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Insira aqui informações adicionais, regras específicas ou contexto extra que o assistente virtual deve saber sobre este evento.
+                          Essas informações serão usadas para instruir a IA em como responder às dúvidas dos participantes.
+                        </p>
+                        <textarea
+                          value={congressInfo.trainingData || ''}
+                          onChange={(e) => setCongressInfo({ ...congressInfo, trainingData: e.target.value })}
+                          disabled={!isEditing}
+                          rows={15}
+                          className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50 font-mono text-sm"
+                          placeholder="Exemplo: O evento terá certificado de 20 horas. O credenciamento começa às 08:00 todos os dias. Não haverá transmissão online..."
+                        />
+                      </div>
+
+                      <div className="border-t pt-6">
+                        <h3 className="text-lg font-medium text-gray-900 mb-4">Arquivos de conhecimento</h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Faça upload de documentos (PDF, DOCX, TXT) para servirem de base de conhecimento para a IA.
+                        </p>
+
+                        {isEditing && (
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Adicionar novo arquivo</label>
+                            <input
+                              type="file"
+                              onChange={async (e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  const file = e.target.files[0];
+                                  if (!congressInfo) return;
+
+                                  const formData = new FormData();
+                                  formData.append('file', file);
+                                  formData.append('congressId', congressInfo.id);
+                                  formData.append('context', 'training');
+
+                                  toast.loading('Enviando arquivo...', { id: 'upload-training' });
+
+                                  try {
+                                    const res = await fetch('/api/upload', {
+                                      method: 'POST',
+                                      body: formData
+                                    });
+
+                                    if (!res.ok) throw new Error('Falha no upload');
+
+                                    const data = await res.json();
+                                    setCongressInfo(data.congress);
+                                    toast.success('Arquivo enviado!', { id: 'upload-training' });
+                                  } catch (error) {
+                                    console.error(error);
+                                    toast.error('Erro ao enviar arquivo', { id: 'upload-training' });
+                                  }
+
+                                  e.target.value = '';
+                                }
+                              }}
+                              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            />
+                          </div>
+                        )}
+
+                        <div className="space-y-2">
+                          {congressInfo.trainingFileUrls && congressInfo.trainingFileUrls.length > 0 ? (
+                            congressInfo.trainingFileUrls.map((url, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline truncate max-w-xs md:max-w-md">
+                                  {url.split('/').pop()}
+                                </a>
+                                {isEditing && (
+                                  <button
+                                    onClick={() => {
+                                      const newUrls = congressInfo.trainingFileUrls?.filter((_, i) => i !== index);
+                                      setCongressInfo({ ...congressInfo, trainingFileUrls: newUrls });
+                                    }}
+                                    className="text-red-500 hover:text-red-700 p-1"
+                                    title="Remover arquivo da lista (Salve para persistir)"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-gray-400 italic">Nenhum arquivo enviado.</p>
+                          )}
                         </div>
-                     </div>
+                      </div>
+                    </div>
                   )}
 
                   {activeTab === 'basic' && (
@@ -935,17 +1010,17 @@ export default function AdminPage() {
                           <p className="text-sm text-gray-500">Habilita o assistente virtual baseado no Gemini para este evento.</p>
                         </div>
                         <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                            <input
-                                type="checkbox"
-                                name="toggle"
-                                id="toggle"
-                                checked={congressInfo.isChatEnabled || false}
-                                onChange={(e) => setCongressInfo({ ...congressInfo, isChatEnabled: e.target.checked })}
-                                disabled={!isEditing}
-                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-300"
-                                style={{ right: congressInfo.isChatEnabled ? '0' : 'auto', left: congressInfo.isChatEnabled ? 'auto' : '0', borderColor: congressInfo.isChatEnabled ? '#10B981' : '#E5E7EB' }}
-                            />
-                            <label htmlFor="toggle" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${congressInfo.isChatEnabled ? 'bg-green-500' : 'bg-gray-300'}`}></label>
+                          <input
+                            type="checkbox"
+                            name="toggle"
+                            id="toggle"
+                            checked={congressInfo.isChatEnabled || false}
+                            onChange={(e) => setCongressInfo({ ...congressInfo, isChatEnabled: e.target.checked })}
+                            disabled={!isEditing}
+                            className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-300"
+                            style={{ right: congressInfo.isChatEnabled ? '0' : 'auto', left: congressInfo.isChatEnabled ? 'auto' : '0', borderColor: congressInfo.isChatEnabled ? '#10B981' : '#E5E7EB' }}
+                          />
+                          <label htmlFor="toggle" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${congressInfo.isChatEnabled ? 'bg-green-500' : 'bg-gray-300'}`}></label>
                         </div>
                       </div>
 

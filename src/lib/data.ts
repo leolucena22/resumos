@@ -5,10 +5,12 @@ interface RawCongress extends Congress {
   book_chapter_edital_url?: string;
   is_chat_enabled?: boolean;
   training_data?: string;
+  training_file_urls?: string[];
   // Make these optional since we're extending Congress which has the camelCase versions
   bookChapterEditalUrl?: string;
   isChatEnabled?: boolean;
   trainingData?: string;
+  trainingFileUrls?: string[];
 }
 
 export async function getCongresses(): Promise<Congress[]> {
@@ -39,6 +41,11 @@ export async function getCongresses(): Promise<Congress[]> {
       delete mappedCongress.training_data;
     }
 
+    if (mappedCongress.training_file_urls !== undefined) {
+      mappedCongress.trainingFileUrls = mappedCongress.training_file_urls;
+      delete mappedCongress.training_file_urls;
+    }
+
     return mappedCongress as Congress;
   });
 }
@@ -63,6 +70,7 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     book_chapter_edital_url?: string;
     is_chat_enabled?: boolean;
     training_data?: string;
+    training_file_urls?: string[];
   };
 
   if (congressData) {
@@ -79,6 +87,11 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     if (congressData.training_data !== undefined) {
       congressData.trainingData = congressData.training_data;
       delete congressData.training_data;
+    }
+
+    if (congressData.training_file_urls !== undefined) {
+      congressData.trainingFileUrls = congressData.training_file_urls;
+      delete congressData.training_file_urls;
     }
   }
 
@@ -105,6 +118,7 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
     book_chapter_edital_url?: string;
     is_chat_enabled?: boolean;
     training_data?: string;
+    training_file_urls?: string[];
   };
 
   if (congressData) {
@@ -122,6 +136,11 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
       congressData.trainingData = congressData.training_data;
       delete congressData.training_data;
     }
+
+    if (congressData.training_file_urls !== undefined) {
+      congressData.trainingFileUrls = congressData.training_file_urls;
+      delete congressData.training_file_urls;
+    }
   }
 
   return congressData;
@@ -133,6 +152,7 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     book_chapter_edital_url?: string;
     is_chat_enabled?: boolean;
     training_data?: string;
+    training_file_urls?: string[];
   } = { ...congress };
 
   if (insertData.bookChapterEditalUrl !== undefined) {
@@ -150,6 +170,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     delete insertData.trainingData;
   }
 
+  if (insertData.trainingFileUrls !== undefined) {
+    insertData.training_file_urls = insertData.trainingFileUrls;
+    delete insertData.trainingFileUrls;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
     .insert([insertData])
@@ -164,6 +189,7 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
   const createdData = data as Congress & {
     is_chat_enabled?: boolean;
     training_data?: string;
+    training_file_urls?: string[];
   };
 
   if (createdData) {
@@ -176,6 +202,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
       createdData.trainingData = createdData.training_data;
       delete createdData.training_data;
     }
+
+    if (createdData.training_file_urls !== undefined) {
+      createdData.trainingFileUrls = createdData.training_file_urls;
+      delete createdData.training_file_urls;
+    }
   }
 
   return createdData;
@@ -187,6 +218,7 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     book_chapter_edital_url?: string;
     is_chat_enabled?: boolean;
     training_data?: string;
+    training_file_urls?: string[];
   } = { ...congress };
 
   if (updateData.bookChapterEditalUrl !== undefined) {
@@ -204,6 +236,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     delete updateData.trainingData;
   }
 
+  if (updateData.trainingFileUrls !== undefined) {
+    updateData.training_file_urls = updateData.trainingFileUrls;
+    delete updateData.trainingFileUrls;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
     .update(updateData)
@@ -219,6 +256,7 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
   const updatedData = data as CongressData & {
     is_chat_enabled?: boolean;
     training_data?: string;
+    training_file_urls?: string[];
   };
 
   if (updatedData) {
@@ -230,6 +268,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     if (updatedData.training_data !== undefined) {
       updatedData.trainingData = updatedData.training_data;
       delete updatedData.training_data;
+    }
+
+    if (updatedData.training_file_urls !== undefined) {
+      updatedData.trainingFileUrls = updatedData.training_file_urls;
+      delete updatedData.training_file_urls;
     }
   }
 

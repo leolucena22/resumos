@@ -19,21 +19,24 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const congressId = formData.get('congressId') as string;
-    const templateType = formData.get('templateType') as keyof NonNullable<CongressData['templateUrls']>; // Use keyof for type safety
+    const templateType = formData.get('templateType') as keyof NonNullable<CongressData['templateUrls']>;
+    const context = formData.get('context') as string | null;
 
-    if (!file || !congressId || !templateType) {
+    if (!file || !congressId || (!templateType && context !== 'training')) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
     const sanitizedFilename = slugifyFilename(file.name);
-    const filePath = `congress-templates/${congressId}/${templateType}-${sanitizedFilename}`;
+    // Use different folder for training files if desired, or same 'templates' bucket
+    const prefix = context === 'training' ? 'training' : templateType;
+    const filePath = `congress-templates/${congressId}/${prefix}-${sanitizedFilename}`;
 
     // Upload file to Supabase Storage
     const { error: uploadError } = await supabaseServerClient.storage
-      .from('templates') // Make sure you have a bucket named 'templates'
-      .upload(filePath, file, { 
+      .from('templates')
+      .upload(filePath, file, {
         cacheControl: '3600',
-        upsert: true // Overwrite file if it already exists
+        upsert: true
       });
 
     if (uploadError) {
@@ -47,31 +50,47 @@ export async function POST(request: NextRequest) {
       .getPublicUrl(filePath);
 
     if (!publicUrlData) {
-        throw new Error('Could not get public URL for the file.');
+      throw new Error('Could not get public URL for the file.');
     }
-    
+
     const publicUrl = publicUrlData.publicUrl;
 
     // --- Start Merge Logic ---
-    // 1. Fetch the current congress to get existing templateUrls
     const currentCongress = await getCongressById(congressId);
     if (!currentCongress) {
-        throw new Error('Congress not found for updating template URLs.');
+      throw new Error('Congress not found for updating template URLs.');
     }
 
-    // 2. Merge the new URL into the existing templateUrls object
-    const updatedTemplateUrls = {
+    let updatedCongress;
+
+    if (context === 'training') {
+      // Append to trainingFileUrls
+      const currentUrls = currentCongress.trainingFileUrls || [];
+      // Optional: Avoid duplicates
+      if (!currentUrls.includes(publicUrl)) {
+        const updatedUrls = [...currentUrls, publicUrl];
+        updatedCongress = await updateCongress(congressId, {
+          trainingFileUrls: updatedUrls,
+        });
+      } else {
+        updatedCongress = currentCongress;
+      }
+
+    } else {
+      // Existing logic for templates
+      const updatedTemplateUrls = {
         ...(currentCongress.templateUrls || {}),
         [templateType]: publicUrl,
-    };
+      };
 
-    // 3. Update the congress record with the full, merged templateUrls
-    const congress = await updateCongress(congressId, {
+      updatedCongress = await updateCongress(congressId, {
         templateUrls: updatedTemplateUrls,
-    });
+      });
+    }
     // --- End Merge Logic ---
 
-    return NextResponse.json({ publicUrl, congress });
+    // Return the updated congress data (using 'congress' key to match client expectation if needed, or just updatedCongress)
+    return NextResponse.json({ publicUrl, congress: updatedCongress });
 
   } catch (error) {
     console.error('API POST /api/upload failed:', error);

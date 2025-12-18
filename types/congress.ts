@@ -16,6 +16,7 @@ export type Congress = {
   bookChapterEditalUrl?: string;
   isChatEnabled?: boolean;
   trainingData?: string;
+  trainingFileUrls?: string[];
   colors: {
     primary: string;
     secondary: string;
@@ -67,6 +68,7 @@ export interface CongressData {
   };
   isChatEnabled?: boolean;
   trainingData?: string;
+  trainingFileUrls?: string[];
   editalSections?: {
     id: string;
     title: string;
