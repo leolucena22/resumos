@@ -83,8 +83,19 @@ export async function POST(req: Request) {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in chat API:", error);
-    return new Response("Internal Server Error", { status: 500 });
+
+    // Check for 429 Rate Limit (GoogleGenerativeAI Error)
+    const err = error as { message?: string; status?: number };
+
+    if (err.message?.includes('429') || err.status === 429) {
+      return new Response(
+        "⚠️ **Limite de tráfego atingido**\n\nMuitas pessoas estão usando a IA agora (ou você testou demais! 😅). O plano gratuito tem limites.\n\n⏳ **Por favor, espere 1 minutinho e tente de novo.**",
+        { status: 429 }
+      );
+    }
+
+    return new Response("Desculpe, a IA encontrou um erro interno. Tente novamente mais tarde.", { status: 500 });
   }
 }

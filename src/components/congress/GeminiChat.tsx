@@ -10,7 +10,7 @@ interface Message {
   content: string;
 }
 
-export default function GeminiChat({ congress }: { congress: CongressData }) {
+export default function GeminiChat({ congress, isEmbedded = false }: { congress: CongressData; isEmbedded?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -32,7 +32,15 @@ export default function GeminiChat({ congress }: { congress: CongressData }) {
     if (isOpen && inputRef.current) {
         setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [isOpen]);
+    
+    // Notify parent about resize
+    if (isEmbedded) {
+        window.parent.postMessage({
+            type: 'CHAT_RESIZE',
+            isOpen: isOpen
+        }, '*');
+    }
+  }, [isOpen, isEmbedded]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +108,11 @@ export default function GeminiChat({ congress }: { congress: CongressData }) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-40 p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in-up"
+          className={`${
+            isEmbedded
+            ? "fixed inset-0 m-auto w-14 h-14 flex items-center justify-center rounded-full shadow-lg transform hover:scale-110 transition-all duration-300"
+            : "fixed bottom-6 left-6 md:bottom-8 md:left-8 z-40 w-14 h-14 flex items-center justify-center rounded-full shadow-lg transform hover:scale-110 transition-all duration-300"
+          }`}
           style={{ backgroundColor: colors.primary, color: "#fff" }}
           aria-label="Abrir chat com IA"
         >
@@ -110,7 +122,11 @@ export default function GeminiChat({ congress }: { congress: CongressData }) {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50 w-[90vw] md:w-[400px] h-[500px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-gray-200 font-sans">
+        <div className={`${
+            isEmbedded 
+            ? "fixed inset-0 w-full h-full bg-white flex flex-col overflow-hidden font-sans" 
+            : "fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50 w-[90vw] md:w-[400px] h-[500px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-gray-200 font-sans"
+        }`}>
           {/* Header */}
           <div
             className="p-4 flex justify-between items-center text-white"
