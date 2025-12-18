@@ -14,6 +14,8 @@ export type Congress = {
   description: string;
   submissionUrl?: string;
   bookChapterEditalUrl?: string;
+  isChatEnabled?: boolean;
+  trainingData?: string;
   colors: {
     primary: string;
     secondary: string;
@@ -27,7 +29,7 @@ export type Congress = {
     content: string;
   }[];
   editalDates?: {
-    openingDate?: string; 
+    openingDate?: string;
     submissionDeadlines?: Deadline[];
     presentationDeadlines?: Deadline[];
     resultsDeadlines?: Deadline[];
@@ -53,7 +55,7 @@ export interface CongressData {
   };
   faq: FAQItem[];
   contact: {
-    email:string;
+    email: string;
     whatsapp?: string;
     instagram?: string;
   };
@@ -63,6 +65,8 @@ export interface CongressData {
     apresentacaoOral?: string;
     eBanner?: string;
   };
+  isChatEnabled?: boolean;
+  trainingData?: string;
   editalSections?: {
     id: string;
     title: string;

@@ -21,6 +21,7 @@ import { CongressData } from "../../../types/congress";
 import Modal from "../Modal"; // Import the Modal component
 
 import SubmissionButton from "./SubmissionButton";
+import GeminiChat from "./GeminiChat";
 
 // Helper to get contrasting text color
 const getContrastingTextColor = (hexColor: string) => {
@@ -908,6 +909,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
       </main>
 
       <FloatingDownloads templateUrls={templateUrls} colors={colors} />
+      {congress.isChatEnabled && <GeminiChat congress={congress} />}
 
       <footer className="relative bg-gray-900 text-white overflow-hidden">
         {/* Background pattern */}

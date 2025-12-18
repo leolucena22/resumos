@@ -15,7 +15,7 @@ import { Toaster } from 'react-hot-toast';
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         {children}
         <Toaster
           position="bottom-right"

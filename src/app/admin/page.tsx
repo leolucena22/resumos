@@ -34,6 +34,8 @@ interface Congress {
   description: string;
   submissionUrl?: string;
   bookChapterEditalUrl?: string;
+  isChatEnabled?: boolean;
+  trainingData?: string;
   colors: {
     primary: string;
     secondary: string;
@@ -133,7 +135,7 @@ const DeadlineSection = ({ title, deadlines, onAdd, onUpdate, onRemove, isEditin
   </div>
 );
 
-type AdminTab = 'basic' | 'colors' | 'templates' | 'editalSections' | 'editalDates' | 'faq';
+type AdminTab = 'basic' | 'colors' | 'templates' | 'editalSections' | 'editalDates' | 'faq' | 'training';
 
 export default function AdminPage() {
   const [congressInfo, setCongressInfo] = useState<Congress | null>(null);
@@ -812,11 +814,11 @@ export default function AdminPage() {
 
                 <div className="border-b">
 
-                  <nav className="flex">
+                  <nav className="flex overflow-x-auto">
 
-                    {[{ key: 'basic', label: 'Informações Básicas' }, { key: 'colors', label: 'Cores' }, { key: 'templates', label: 'Modelos' }, { key: 'editalSections', label: 'Seções do Edital' }, { key: 'editalDates', label: 'Datas do Edital' }, { key: 'faq', label: 'FAQ' }].map((tab) => (
+                    {[{ key: 'basic', label: 'Informações Básicas' }, { key: 'training', label: 'Treinamento IA' }, { key: 'colors', label: 'Cores' }, { key: 'templates', label: 'Modelos' }, { key: 'editalSections', label: 'Seções do Edital' }, { key: 'editalDates', label: 'Datas do Edital' }, { key: 'faq', label: 'FAQ' }].map((tab) => (
 
-                      <button key={tab.key} onClick={() => setActiveTab(tab.key as AdminTab)} className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${activeTab === tab.key ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                      <button key={tab.key} onClick={() => setActiveTab(tab.key as AdminTab)} className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.key ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
 
                         {tab.label}
 
@@ -831,6 +833,25 @@ export default function AdminPage() {
 
 
                 <div className="p-6">
+                  {activeTab === 'training' && (
+                     <div className="space-y-6">
+                        <div>
+                           <label className="block text-sm font-medium text-gray-700 mb-2">Dados de Treinamento da IA</label>
+                           <p className="text-sm text-gray-500 mb-4">
+                              Insira aqui informações adicionais, regras específicas ou contexto extra que o assistente virtual deve saber sobre este evento. 
+                              Essas informações serão usadas para instruir a IA em como responder às dúvidas dos participantes.
+                           </p>
+                           <textarea
+                              value={congressInfo.trainingData || ''}
+                              onChange={(e) => setCongressInfo({ ...congressInfo, trainingData: e.target.value })}
+                              disabled={!isEditing}
+                              rows={15}
+                              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50 font-mono text-sm"
+                              placeholder="Exemplo: O evento terá certificado de 20 horas. O credenciamento começa às 08:00 todos os dias. Não haverá transmissão online..."
+                           />
+                        </div>
+                     </div>
+                  )}
 
                   {activeTab === 'basic' && (
 
@@ -899,21 +920,33 @@ export default function AdminPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Link do edital de capítulo de livro</label>
 
                         <input
-
                           type="url"
-
                           value={congressInfo.bookChapterEditalUrl || ''}
-
                           onChange={(e) => setCongressInfo({ ...congressInfo, bookChapterEditalUrl: e.target.value })}
-
                           disabled={!isEditing}
-
                           placeholder="https://plataforma.com/capitulo-livro"
-
                           className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
-
                         />
+                      </div>
 
+                      <div className="flex items-center space-x-3 border p-4 rounded-lg bg-gray-50">
+                        <div className="flex-1">
+                          <label className="block text-sm font-medium text-gray-900">Ativar Chatbot eIA</label>
+                          <p className="text-sm text-gray-500">Habilita o assistente virtual baseado no Gemini para este evento.</p>
+                        </div>
+                        <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input
+                                type="checkbox"
+                                name="toggle"
+                                id="toggle"
+                                checked={congressInfo.isChatEnabled || false}
+                                onChange={(e) => setCongressInfo({ ...congressInfo, isChatEnabled: e.target.checked })}
+                                disabled={!isEditing}
+                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-300"
+                                style={{ right: congressInfo.isChatEnabled ? '0' : 'auto', left: congressInfo.isChatEnabled ? 'auto' : '0', borderColor: congressInfo.isChatEnabled ? '#10B981' : '#E5E7EB' }}
+                            />
+                            <label htmlFor="toggle" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${congressInfo.isChatEnabled ? 'bg-green-500' : 'bg-gray-300'}`}></label>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

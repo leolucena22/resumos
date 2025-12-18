@@ -23,17 +23,33 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
 
   if (error) {
     if (error.code === 'PGRST116') {
-        return null;
+      return null;
     }
     console.error(`Error fetching congress with slug ${slug}:`, error);
     throw new Error(`Could not fetch congress with slug ${slug}.`);
   }
 
-  const congressData = data as CongressData & { book_chapter_edital_url?: string };
+  const congressData = data as CongressData & {
+    book_chapter_edital_url?: string;
+    is_chat_enabled?: boolean;
+    training_data?: string;
+  };
 
-  if (congressData && congressData.book_chapter_edital_url) {
-    congressData.bookChapterEditalUrl = congressData.book_chapter_edital_url;
-    delete congressData.book_chapter_edital_url;
+  if (congressData) {
+    if (congressData.book_chapter_edital_url) {
+      congressData.bookChapterEditalUrl = congressData.book_chapter_edital_url;
+      delete congressData.book_chapter_edital_url;
+    }
+
+    if (congressData.is_chat_enabled !== undefined) {
+      congressData.isChatEnabled = congressData.is_chat_enabled;
+      delete congressData.is_chat_enabled;
+    }
+
+    if (congressData.training_data !== undefined) {
+      congressData.trainingData = congressData.training_data;
+      delete congressData.training_data;
+    }
   }
 
   return congressData;
@@ -41,37 +57,67 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
 
 // Function to get a single congress by its ID
 export async function getCongressById(id: string): Promise<CongressData | null> {
-    const { data, error } = await supabaseServerClient
-      .from('congresses')
-      .select('*')
-      .eq('id', id)
-      .single();
-  
-    if (error) {
-        if (error.code === 'PGRST116') {
-            return null;
-        }
-        console.error(`Error fetching congress with id ${id}:`, error);
-        throw new Error(`Could not fetch congress with id ${id}.`);
-    }
-  
-    const congressData = data as CongressData & { book_chapter_edital_url?: string };
+  const { data, error } = await supabaseServerClient
+    .from('congresses')
+    .select('*')
+    .eq('id', id)
+    .single();
 
-    if (congressData && congressData.book_chapter_edital_url) {
-        congressData.bookChapterEditalUrl = congressData.book_chapter_edital_url;
-        delete congressData.book_chapter_edital_url;
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
     }
-
-    return congressData;
+    console.error(`Error fetching congress with id ${id}:`, error);
+    throw new Error(`Could not fetch congress with id ${id}.`);
   }
+
+  const congressData = data as CongressData & {
+    book_chapter_edital_url?: string;
+    is_chat_enabled?: boolean;
+    training_data?: string;
+  };
+
+  if (congressData) {
+    if (congressData.book_chapter_edital_url) {
+      congressData.bookChapterEditalUrl = congressData.book_chapter_edital_url;
+      delete congressData.book_chapter_edital_url;
+    }
+
+    if (congressData.is_chat_enabled !== undefined) {
+      congressData.isChatEnabled = congressData.is_chat_enabled;
+      delete congressData.is_chat_enabled;
+    }
+
+    if (congressData.training_data !== undefined) {
+      congressData.trainingData = congressData.training_data;
+      delete congressData.training_data;
+    }
+  }
+
+  return congressData;
+}
 
 // Function to create a new congress
 export async function createCongress(congress: Partial<Congress>): Promise<Congress> {
-  const insertData: Partial<Congress> & { book_chapter_edital_url?: string } = { ...congress };
+  const insertData: Partial<Congress> & {
+    book_chapter_edital_url?: string;
+    is_chat_enabled?: boolean;
+    training_data?: string;
+  } = { ...congress };
 
   if (insertData.bookChapterEditalUrl !== undefined) {
     insertData.book_chapter_edital_url = insertData.bookChapterEditalUrl;
     delete insertData.bookChapterEditalUrl;
+  }
+
+  if (insertData.isChatEnabled !== undefined) {
+    insertData.is_chat_enabled = insertData.isChatEnabled;
+    delete insertData.isChatEnabled;
+  }
+
+  if (insertData.trainingData !== undefined) {
+    insertData.training_data = insertData.trainingData;
+    delete insertData.trainingData;
   }
 
   const { data, error } = await supabaseServerClient
@@ -85,16 +131,47 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     throw new Error('Could not create congress.');
   }
 
-  return data;
+  const createdData = data as Congress & {
+    is_chat_enabled?: boolean;
+    training_data?: string;
+  };
+
+  if (createdData) {
+    if (createdData.is_chat_enabled !== undefined) {
+      createdData.isChatEnabled = createdData.is_chat_enabled;
+      delete createdData.is_chat_enabled;
+    }
+
+    if (createdData.training_data !== undefined) {
+      createdData.trainingData = createdData.training_data;
+      delete createdData.training_data;
+    }
+  }
+
+  return createdData;
 }
 
 // Function to update an existing congress
 export async function updateCongress(id: string, congress: Partial<CongressData>): Promise<CongressData> {
-  const updateData: Partial<CongressData> & { book_chapter_edital_url?: string } = { ...congress };
+  const updateData: Partial<CongressData> & {
+    book_chapter_edital_url?: string;
+    is_chat_enabled?: boolean;
+    training_data?: string;
+  } = { ...congress };
 
   if (updateData.bookChapterEditalUrl !== undefined) {
-    updateData['book_chapter_edital_url'] = updateData.bookChapterEditalUrl;
+    updateData.book_chapter_edital_url = updateData.bookChapterEditalUrl;
     delete updateData.bookChapterEditalUrl;
+  }
+
+  if (updateData.isChatEnabled !== undefined) {
+    updateData.is_chat_enabled = updateData.isChatEnabled;
+    delete updateData.isChatEnabled;
+  }
+
+  if (updateData.trainingData !== undefined) {
+    updateData.training_data = updateData.trainingData;
+    delete updateData.trainingData;
   }
 
   const { data, error } = await supabaseServerClient
@@ -109,7 +186,24 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     throw new Error(`Could not update congress with id ${id}.`);
   }
 
-  return data;
+  const updatedData = data as CongressData & {
+    is_chat_enabled?: boolean;
+    training_data?: string;
+  };
+
+  if (updatedData) {
+    if (updatedData.is_chat_enabled !== undefined) {
+      updatedData.isChatEnabled = updatedData.is_chat_enabled;
+      delete updatedData.is_chat_enabled;
+    }
+
+    if (updatedData.training_data !== undefined) {
+      updatedData.trainingData = updatedData.training_data;
+      delete updatedData.training_data;
+    }
+  }
+
+  return updatedData;
 }
 
 // Function to delete a congress
@@ -123,13 +217,13 @@ export async function deleteCongress(id: string): Promise<void> {
 
     if (listError) {
       if (listError.message !== 'The resource was not found') {
-          console.error(`Error listing files for congress ${id}:`, listError);
-          throw new Error(`Could not list files for deletion for congress ${id}.`);
+        console.error(`Error listing files for congress ${id}:`, listError);
+        throw new Error(`Could not list files for deletion for congress ${id}.`);
       }
     }
 
     if (files && files.length > 0) {
-      const filePaths = files.map(file => `${folderPath}/${file.name}`);
+      const filePaths = files.map((file: { name: string }) => `${folderPath}/${file.name}`);
       const { error: removeError } = await supabaseServerClient.storage
         .from('templates')
         .remove(filePaths);
