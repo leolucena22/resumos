@@ -34,13 +34,13 @@
     iframe.style.position = 'fixed';
     iframe.style.bottom = '20px';
     iframe.style.left = '20px';
-    iframe.style.width = '100px';
-    iframe.style.height = '100px';
+    iframe.style.width = '150px'; // Increased to prevent hover clip
+    iframe.style.height = '150px'; // Increased to prevent hover clip
     iframe.style.border = 'none';
     iframe.style.zIndex = '999999';
     iframe.style.backgroundColor = 'transparent';
-    iframe.style.transition = 'width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease';
-    iframe.style.borderRadius = '1rem';
+    iframe.style.transition = 'width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease';
+    iframe.style.borderRadius = '0'; // No radius initially to avoid corner clipping
 
     document.body.appendChild(iframe);
 
@@ -56,11 +56,13 @@
                 iframe.style.maxHeight = '90vh';
                 iframe.style.maxWidth = '90vw';
                 iframe.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+                iframe.style.borderRadius = '1rem'; // Add radius when open
             } else {
                 // Closed state dimensions (button only)
-                iframe.style.width = '100px';
-                iframe.style.height = '100px';
+                iframe.style.width = '150px'; // Keep larger size
+                iframe.style.height = '150px';
                 iframe.style.boxShadow = 'none';
+                iframe.style.borderRadius = '0'; // Remove radius when closed
             }
         }
     });
