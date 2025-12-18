@@ -91,7 +91,7 @@ export async function POST(req: Request) {
 
     if (err.message?.includes('429') || err.status === 429) {
       return new Response(
-        "⚠️ **Limite de tráfego atingido**\n\nMuitas pessoas estão usando a IA agora (ou você testou demais! 😅). O plano gratuito tem limites.\n\n⏳ **Por favor, espere 1 minutinho e tente de novo.**",
+        "⚠️ **Alto volume de acessos**\n\nNossos servidores estão ocupados no momento devido à alta demanda. Por favor, aguarde alguns instantes e tente novamente.",
         { status: 429 }
       );
     }

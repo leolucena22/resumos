@@ -108,11 +108,7 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className={`${
-            isEmbedded
-            ? "fixed inset-0 m-auto w-14 h-14 flex items-center justify-center rounded-full shadow-lg transform hover:scale-110 transition-all duration-300"
-            : "fixed bottom-6 left-6 md:bottom-8 md:left-8 z-40 w-14 h-14 flex items-center justify-center rounded-full shadow-lg transform hover:scale-110 transition-all duration-300"
-          }`}
+          className="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-40 p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in-up"
           style={{ backgroundColor: colors.primary, color: "#fff" }}
           aria-label="Abrir chat com IA"
         >
