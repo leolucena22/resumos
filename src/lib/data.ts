@@ -1,7 +1,16 @@
 import { supabaseServerClient } from './supabaseServerClient';
 import { Congress, CongressData } from '../../types/congress';
 
-// Function to get all congresses
+interface RawCongress extends Congress {
+  book_chapter_edital_url?: string;
+  is_chat_enabled?: boolean;
+  training_data?: string;
+  // Make these optional since we're extending Congress which has the camelCase versions
+  bookChapterEditalUrl?: string;
+  isChatEnabled?: boolean;
+  trainingData?: string;
+}
+
 export async function getCongresses(): Promise<Congress[]> {
   const { data, error } = await supabaseServerClient.from('congresses').select('*');
 
@@ -10,7 +19,28 @@ export async function getCongresses(): Promise<Congress[]> {
     return [];
   }
 
-  return data || [];
+  if (!data) return [];
+
+  return data.map((congress: RawCongress) => {
+    const mappedCongress = { ...congress };
+
+    if (mappedCongress.book_chapter_edital_url) {
+      mappedCongress.bookChapterEditalUrl = mappedCongress.book_chapter_edital_url;
+      delete mappedCongress.book_chapter_edital_url;
+    }
+
+    if (mappedCongress.is_chat_enabled !== undefined) {
+      mappedCongress.isChatEnabled = mappedCongress.is_chat_enabled;
+      delete mappedCongress.is_chat_enabled;
+    }
+
+    if (mappedCongress.training_data !== undefined) {
+      mappedCongress.trainingData = mappedCongress.training_data;
+      delete mappedCongress.training_data;
+    }
+
+    return mappedCongress as Congress;
+  });
 }
 
 // Function to get a single congress by its slug
