@@ -42,6 +42,36 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
     }
   }, [isOpen, isEmbedded]);
 
+  // Visual Viewport logic for mobile keyboard
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!isEmbedded && window.innerWidth >= 768) return; // Skip for desktop/non-embedded if not needed, but safe to keep for mobile web too.
+
+    const handleResize = () => {
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height);
+      }
+    };
+
+    if (window.visualViewport) {
+      setViewportHeight(window.visualViewport.height);
+      window.visualViewport.addEventListener("resize", handleResize);
+      window.visualViewport.addEventListener("scroll", handleResize);
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", handleResize);
+        window.visualViewport.removeEventListener("scroll", handleResize);
+      }
+    };
+  }, [isEmbedded]);
+
+  const containerStyle = (isOpen && (isEmbedded || window.innerWidth < 768)) 
+    ? { height: viewportHeight ? `${viewportHeight}px` : '100dvh' } 
+    : {};
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -118,10 +148,16 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`${isEmbedded
-          ? "fixed inset-0 w-full h-[100dvh] bg-white flex flex-col overflow-hidden font-sans"
-          : "fixed inset-0 z-50 w-full h-[100dvh] md:fixed md:bottom-8 md:right-4 md:z-50 md:w-[400px] md:h-[500px] md:max-h-[80vh] md:inset-auto bg-white md:rounded-2xl md:shadow-2xl flex flex-col overflow-hidden animate-fade-in-up md:border md:border-gray-200 font-sans"
-          }`}>
+        <div 
+          className={`${isEmbedded
+            ? "fixed inset-x-0 bottom-0 bg-white flex flex-col overflow-hidden font-sans"
+            : "fixed inset-x-0 bottom-0 z-50 w-full md:fixed md:bottom-8 md:right-4 md:z-50 md:w-[400px] md:h-[500px] md:max-h-[80vh] md:inset-auto bg-white md:rounded-2xl md:shadow-2xl flex flex-col overflow-hidden animate-fade-in-up md:border md:border-gray-200 font-sans"
+          }`}
+          style={{
+            ...containerStyle, 
+            top: (isEmbedded || window.innerWidth < 768) ? 'auto' : undefined 
+          }}
+        >
           {/* Header */}
           <div
             className="p-4 flex justify-between items-center text-white"
@@ -189,7 +225,6 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                           // If it's inside a pre, the pre handles the scroll.
                           // If it's inline, we want it to wrap.
                           return (
-                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             <code className={`${className} break-all whitespace-pre-wrap`} {...props}>
                               {children}
                             </code>
@@ -250,6 +285,14 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onFocus={(e) => {
+                    // Mobile keyboard fix: force scroll to view
+                    if (isEmbedded || window.innerWidth < 768) {
+                      setTimeout(() => {
+                        e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }, 300);
+                    }
+                  }}
                   placeholder="Digite sua dúvida..."
                   className="w-full pl-4 pr-12 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:bg-white transition-all outline-none text-sm text-gray-700"
                   style={{ "--tw-ring-color": colors.primary } as React.CSSProperties}
