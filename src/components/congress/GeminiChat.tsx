@@ -108,7 +108,7 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in-up"
+          className="fixed bottom-6 right-2 md:bottom-8 md:right-4 z-40 p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in-up"
           style={{ backgroundColor: colors.primary, color: "#fff" }}
           aria-label="Abrir chat com IA"
         >
@@ -119,8 +119,8 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
       {/* Chat Window */}
       {isOpen && (
         <div className={`${isEmbedded
-          ? "fixed inset-0 w-full h-full bg-white flex flex-col overflow-hidden font-sans"
-          : "fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 w-[90vw] md:w-[400px] h-[500px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-gray-200 font-sans"
+          ? "fixed inset-0 w-full h-[100dvh] bg-white flex flex-col overflow-hidden font-sans"
+          : "fixed inset-0 z-50 w-full h-[100dvh] md:fixed md:bottom-8 md:right-4 md:z-50 md:w-[400px] md:h-[500px] md:max-h-[80vh] md:inset-auto bg-white md:rounded-2xl md:shadow-2xl flex flex-col overflow-hidden animate-fade-in-up md:border md:border-gray-200 font-sans"
           }`}>
           {/* Header */}
           <div
