@@ -1,6 +1,45 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { CongressData } from "../../../../types/congress";
+import { CongressData, Deadline } from "../../../../types/congress";
 import * as mammoth from 'mammoth';
+
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr) return null;
+  // Try YYYY-MM-DD
+  let match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) {
+    return new Date(parseInt(match[1]), parseInt(match[2]) - 1, parseInt(match[3]));
+  }
+  // Try DD/MM/YYYY
+  match = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (match) {
+    return new Date(parseInt(match[3]), parseInt(match[2]) - 1, parseInt(match[1]));
+  }
+  return null;
+}
+
+function getActiveDeadlineDate(deadlines: Deadline[] | undefined): string {
+  if (!deadlines || deadlines.length === 0) return 'Não informada';
+
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  const sorted = [...deadlines].sort((a, b) => {
+    const dateA = parseDate(a.date);
+    const dateB = parseDate(b.date);
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  const active = sorted.find(d => {
+    const date = parseDate(d.date);
+    return date && date >= now;
+  });
+
+  const target = active || sorted[sorted.length - 1];
+  return target ? target.date : 'Não informada';
+}
 
 async function fetchAndParseFile(url: string): Promise<string> {
   try {
@@ -75,9 +114,9 @@ export async function POST(req: Request) {
       Datas Importantes:
       ${congress.editalDates ? `
         Abertura: ${congress.editalDates.openingDate || 'Não informada'}
-        Submissão: ${congress.editalDates.submissionDeadlines?.map(d => `${d.name} (${d.date})`).join(', ') || 'Não informada'}
-        Apresentação: ${congress.editalDates.presentationDeadlines?.map(d => `${d.name} (${d.date})`).join(', ') || 'Não informada'}
-        Resultados: ${congress.editalDates.resultsDeadlines?.map(d => `${d.name} (${d.date})`).join(', ') || 'Não informada'}
+        Submissão: ${getActiveDeadlineDate(congress.editalDates.submissionDeadlines)}
+        Apresentação: ${getActiveDeadlineDate(congress.editalDates.presentationDeadlines)}
+        Resultados: ${getActiveDeadlineDate(congress.editalDates.resultsDeadlines)}
         Publicação: ${congress.editalDates.publicationDate || 'Não informada'}
       ` : 'Nenhuma data específica listada.'}
       
@@ -104,8 +143,7 @@ export async function POST(req: Request) {
       DIRETRIZES DE RESPOSTA:
       1. Responda com base EXCLUSIVAMENTE nessas informações. Se não souber, diga que não encontrou no edital.
       2. SOBRE DATAS E PRAZOS: Use a data de "HOJE" fornecida acima como referência. 
-         - Se houver múltiplos prazos para a mesma coisa (ex: "Submissão", "Prorrogação"), informe APENAS o prazo que está VIGENTE (o próximo a vencer a partir de hoje).
-         - NÃO mencione prazos futuros de prorrogação se o prazo original ainda não venceu, a menos que o usuário pergunte especificamente.
+         - As datas fornecidas acima já são as vigentes. NÃO mencione qual número da prorrogação (ex: "1ª prorrogação"). Apenas informe que é a data limite ou prazo.
          - Se o prazo já passou, informe que está encerrado.
       3. Seja conciso, direto e use Markdown.
       
