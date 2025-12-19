@@ -10,8 +10,16 @@ interface Message {
   content: string;
 }
 
-export default function GeminiChat({ congress, isEmbedded = false }: { congress: CongressData; isEmbedded?: boolean }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function GeminiChat({ 
+  congress, 
+  isEmbedded = false,
+  variant = 'widget'
+}: { 
+  congress: CongressData; 
+  isEmbedded?: boolean;
+  variant?: 'widget' | 'fullPage';
+}) {
+  const [isOpen, setIsOpen] = useState(variant === 'fullPage');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -68,9 +76,9 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
     };
   }, [isEmbedded]);
 
-  const containerStyle = (isOpen && (isEmbedded || window.innerWidth < 768)) 
+  const containerStyle = (isOpen && (isEmbedded || window.innerWidth < 768) && variant !== 'fullPage') 
     ? { height: viewportHeight ? `${viewportHeight}px` : '100dvh' } 
-    : {};
+    : { height: '100%' };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,13 +157,16 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
       {/* Chat Window */}
       {isOpen && (
         <div 
-          className={`${isEmbedded
-            ? "fixed inset-x-0 bottom-0 bg-white flex flex-col overflow-hidden font-sans"
-            : "fixed inset-x-0 bottom-0 z-50 w-full md:fixed md:bottom-8 md:right-4 md:z-50 md:w-[400px] md:h-[500px] md:max-h-[80vh] md:inset-auto bg-white md:rounded-2xl md:shadow-2xl flex flex-col overflow-hidden animate-fade-in-up md:border md:border-gray-200 font-sans"
+          className={`${
+            variant === 'fullPage' 
+              ? "w-full flex-1 flex flex-col bg-white overflow-hidden font-sans"
+              : isEmbedded
+                ? "fixed inset-x-0 bottom-0 bg-white flex flex-col overflow-hidden font-sans"
+                : "fixed inset-x-0 bottom-0 z-50 w-full md:fixed md:bottom-8 md:right-4 md:z-50 md:w-[400px] md:h-[500px] md:max-h-[80vh] md:inset-auto bg-white md:rounded-2xl md:shadow-2xl flex flex-col overflow-hidden animate-fade-in-up md:border md:border-gray-200 font-sans"
           }`}
           style={{
             ...containerStyle, 
-            top: (isEmbedded || window.innerWidth < 768) ? 'auto' : undefined 
+            top: (isEmbedded || window.innerWidth < 768) && variant !== 'fullPage' ? 'auto' : undefined 
           }}
         >
           {/* Header */}
@@ -170,12 +181,14 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                 <p className="text-xs opacity-90">Tire dúvidas sobre o edital</p>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-1 rounded-full hover:bg-white/20 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {variant !== 'fullPage' && (
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 rounded-full hover:bg-white/20 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           {/* Messages Area */}

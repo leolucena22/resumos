@@ -1091,6 +1091,42 @@ export default function AdminPage() {
                             <Copy className="w-4 h-4" />
                           </button>
                         </div>
+                        </div>
+
+                      {/* Share Link Section */}
+                      <div className="border-t pt-6">
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">Link para Compartilhar</h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                           Link direto para a página exclusiva do chat com IA.
+                        </p>
+
+                        <div className="relative">
+                           <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                             <input 
+                               type="text" 
+                               readOnly 
+                               value={`${typeof window !== 'undefined' ? window.location.origin : ''}/ia/${congressInfo.slug}`}
+                               className="flex-1 bg-transparent border-none text-sm text-gray-600 focus:ring-0 outline-none w-full"
+                             />
+                             <button
+                               onClick={() => {
+                                 const link = `${window.location.origin}/ia/${congressInfo.slug}`;
+                                 navigator.clipboard.writeText(link);
+                                 toast.success('Link copiado!');
+                               }}
+                               className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                               title="Copiar Link"
+                             >
+                               <Copy className="w-5 h-5" />
+                             </button>
+                          </div>
+                      
+                           <div className="mt-2 text-xs text-right">
+                             <a href={`/ia/${congressInfo.slug}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+                               Abrir página <LinkIcon className="w-3 h-3" />
+                             </a>
+                           </div>
+                        </div>
                       </div>
                     </div>
                   )}
