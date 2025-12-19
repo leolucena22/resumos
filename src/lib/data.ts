@@ -6,11 +6,21 @@ interface RawCongress extends Congress {
   is_chat_enabled?: boolean;
   training_data?: string;
   training_file_urls?: string[];
+  ai_config?: {
+    provider: 'gemini' | 'openai';
+    apiKeys?: { gemini?: string; openai?: string; };
+    model?: string;
+  };
   // Make these optional since we're extending Congress which has the camelCase versions
   bookChapterEditalUrl?: string;
   isChatEnabled?: boolean;
   trainingData?: string;
   trainingFileUrls?: string[];
+  aiConfig?: {
+    provider: 'gemini' | 'openai';
+    apiKeys?: { gemini?: string; openai?: string; };
+    model?: string;
+  };
 }
 
 export async function getCongresses(): Promise<Congress[]> {
@@ -46,6 +56,11 @@ export async function getCongresses(): Promise<Congress[]> {
       delete mappedCongress.training_file_urls;
     }
 
+    if (mappedCongress.ai_config !== undefined) {
+      mappedCongress.aiConfig = mappedCongress.ai_config;
+      delete mappedCongress.ai_config;
+    }
+
     return mappedCongress as Congress;
   });
 }
@@ -71,6 +86,11 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     is_chat_enabled?: boolean;
     training_data?: string;
     training_file_urls?: string[];
+    ai_config?: {
+      provider: 'gemini' | 'openai';
+      apiKeys?: { gemini?: string; openai?: string; };
+      model?: string;
+    };
   };
 
   if (congressData) {
@@ -92,6 +112,11 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     if (congressData.training_file_urls !== undefined) {
       congressData.trainingFileUrls = congressData.training_file_urls;
       delete congressData.training_file_urls;
+    }
+
+    if (congressData.ai_config !== undefined) {
+      congressData.aiConfig = congressData.ai_config;
+      delete congressData.ai_config;
     }
   }
 
@@ -119,6 +144,11 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
     is_chat_enabled?: boolean;
     training_data?: string;
     training_file_urls?: string[];
+    ai_config?: {
+      provider: 'gemini' | 'openai';
+      apiKeys?: { gemini?: string; openai?: string; };
+      model?: string;
+    };
   };
 
   if (congressData) {
@@ -141,6 +171,11 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
       congressData.trainingFileUrls = congressData.training_file_urls;
       delete congressData.training_file_urls;
     }
+
+    if (congressData.ai_config !== undefined) {
+      congressData.aiConfig = congressData.ai_config;
+      delete congressData.ai_config;
+    }
   }
 
   return congressData;
@@ -153,6 +188,7 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     is_chat_enabled?: boolean;
     training_data?: string;
     training_file_urls?: string[];
+    ai_config?: unknown;
   } = { ...congress };
 
   if (insertData.bookChapterEditalUrl !== undefined) {
@@ -175,6 +211,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     delete insertData.trainingFileUrls;
   }
 
+  if (insertData.aiConfig !== undefined) {
+    insertData.ai_config = insertData.aiConfig;
+    delete insertData.aiConfig;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
     .insert([insertData])
@@ -190,6 +231,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     is_chat_enabled?: boolean;
     training_data?: string;
     training_file_urls?: string[];
+    ai_config?: {
+      provider: 'gemini' | 'openai';
+      apiKeys?: { gemini?: string; openai?: string; };
+      model?: string;
+    };
   };
 
   if (createdData) {
@@ -207,6 +253,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
       createdData.trainingFileUrls = createdData.training_file_urls;
       delete createdData.training_file_urls;
     }
+
+    if (createdData.ai_config !== undefined) {
+      createdData.aiConfig = createdData.ai_config;
+      delete createdData.ai_config;
+    }
   }
 
   return createdData;
@@ -219,6 +270,7 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     is_chat_enabled?: boolean;
     training_data?: string;
     training_file_urls?: string[];
+    ai_config?: unknown;
   } = { ...congress };
 
   if (updateData.bookChapterEditalUrl !== undefined) {
@@ -241,6 +293,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     delete updateData.trainingFileUrls;
   }
 
+  if (updateData.aiConfig !== undefined) {
+    updateData.ai_config = updateData.aiConfig;
+    delete updateData.aiConfig;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
     .update(updateData)
@@ -257,6 +314,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     is_chat_enabled?: boolean;
     training_data?: string;
     training_file_urls?: string[];
+    ai_config?: {
+      provider: 'gemini' | 'openai';
+      apiKeys?: { gemini?: string; openai?: string };
+      model?: string;
+    };
   };
 
   if (updatedData) {
@@ -273,6 +335,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     if (updatedData.training_file_urls !== undefined) {
       updatedData.trainingFileUrls = updatedData.training_file_urls;
       delete updatedData.training_file_urls;
+    }
+
+    if (updatedData.ai_config !== undefined) {
+      updatedData.aiConfig = updatedData.ai_config;
+      delete updatedData.ai_config;
     }
   }
 
@@ -318,4 +385,36 @@ export async function deleteCongress(id: string): Promise<void> {
     console.error(`Error deleting congress with id ${id} from database:`, dbError);
     throw new Error(`Could not delete congress with id ${id}.`);
   }
+}
+
+// --- Global Settings ---
+
+export async function getGlobalSettings(key: string) {
+  const { data, error } = await supabaseServerClient
+    .from('settings')
+    .select('value')
+    .eq('key', key)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching setting ${key}:`, error);
+    return null;
+  }
+
+  return data?.value || null;
+}
+
+export async function updateGlobalSettings(key: string, value: unknown) {
+  const { data, error } = await supabaseServerClient
+    .from('settings')
+    .upsert({ key, value })
+    .select()
+    .single();
+
+  if (error) {
+    console.error(`Error updating setting ${key}:`, error);
+    throw new Error(`Could not update setting ${key}.`);
+  }
+
+  return data;
 }

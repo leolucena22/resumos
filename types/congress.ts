@@ -36,6 +36,14 @@ export type Congress = {
     resultsDeadlines?: Deadline[];
     publicationDate?: string;
   };
+  aiConfig?: {
+    provider: 'gemini' | 'openai';
+    apiKeys?: {
+      gemini?: string;
+      openai?: string;
+    };
+    model?: string;
+  };
 };
 
 export interface CongressData {
@@ -80,6 +88,14 @@ export interface CongressData {
     presentationDeadlines?: Deadline[];
     resultsDeadlines?: Deadline[];
     publicationDate?: string;
+  };
+  aiConfig?: {
+    provider: 'gemini' | 'openai';
+    apiKeys?: {
+      gemini?: string;
+      openai?: string;
+    };
+    model?: string;
   };
 }
 

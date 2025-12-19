@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { CongressData, Deadline } from "../../../../types/congress";
 import * as mammoth from 'mammoth';
 
@@ -81,17 +82,36 @@ async function fetchAndParseFile(url: string): Promise<string> {
   }
 }
 
+import { getGlobalSettings } from "@/lib/data";
+
+// ...
+
 export async function POST(req: Request) {
   try {
     const { messages, context } = await req.json();
     const congress = context as CongressData;
 
-    if (!process.env.GEMINI_API_KEY) {
-      return new Response("GEMINI_API_KEY environment variable not set", { status: 500 });
-    }
+    console.log(`[Chat API] Received request for congress: ${congress?.title}`);
+    console.log(`[Chat API] Edital Sections count: ${congress?.editalSections?.length || 0}`);
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // AI Configuration Setup (Global)
+    const globalSettings = await getGlobalSettings('ai_config');
+    const aiConfig = (globalSettings as { provider?: 'gemini' | 'openai'; apiKeys?: { gemini?: string; openai?: string }; model?: string }) || {};
+
+    const provider = aiConfig.provider || 'gemini';
+    const activeModelName = aiConfig.model || (provider === 'openai' ? 'gpt-4o' : 'gemini-2.5-flash');
+
+    console.log(`[Chat API] Provider: ${provider}, Model: ${activeModelName}`);
+
+    // Determine API Key
+    let apiKey = '';
+    if (provider === 'openai') {
+      apiKey = aiConfig.apiKeys?.openai || process.env.OPENAI_API_KEY || '';
+      if (!apiKey) return new Response("OpenAI API Key not configured globally.", { status: 500 });
+    } else {
+      apiKey = aiConfig.apiKeys?.gemini || process.env.GEMINI_API_KEY || '';
+      if (!apiKey) return new Response("Gemini API Key not configured globally.", { status: 500 });
+    }
 
     // --- Load Knowledge Base Files ---
     let knowledgeBaseContent = '';
@@ -99,6 +119,7 @@ export async function POST(req: Request) {
       const filePromises = congress.trainingFileUrls.map(url => fetchAndParseFile(url));
       const fileContents = await Promise.all(filePromises);
       knowledgeBaseContent = fileContents.join('\n');
+      console.log(`[Chat API] Knowledge Base Content loaded: ${knowledgeBaseContent.length} chars`);
     }
 
     const systemPrompt = `
@@ -106,79 +127,140 @@ export async function POST(req: Request) {
       
       HOJE É: ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
       
-      Aqui estão as informações sobre o congresso:
+      Aqui estão as informações do congresso (Sua Base de Conhecimento):
       
-      Descrição: ${congress.description}
+      === DESCRIÇÃO DO CONGRESSO ===
+      ${congress.description}
       Data: ${congress.date}
       
-      Datas Importantes:
+      === DATAS IMPORTANTES (Use estas datas como referência absoluta) ===
       ${congress.editalDates ? `
         Abertura: ${congress.editalDates.openingDate || 'Não informada'}
+        
+        Submissão:
         Submissão: ${getActiveDeadlineDate(congress.editalDates.submissionDeadlines)}
+        
         Apresentação: ${getActiveDeadlineDate(congress.editalDates.presentationDeadlines)}
+        
         Resultados: ${getActiveDeadlineDate(congress.editalDates.resultsDeadlines)}
+        
         Publicação: ${congress.editalDates.publicationDate || 'Não informada'}
       ` : 'Nenhuma data específica listada.'}
       
-      Seções do Edital (Normas):
-      ${congress.editalSections?.map(s => `=== ${s.title} ===\n${s.content.replace(/<[^>]*>/g, '')}`).join('\n\n') || 'Nenhuma seção de edital disponível.'}
+      === SEÇÕES DO EDITAL / REGRAS (LEIA ATENTAMENTE) ===
+      ${congress.editalSections?.map(s => `\n-- ${s.title} --\n${s.content.replace(/<[^>]*>/g, '')}`).join('\n') || 'Nenhuma seção de edital disponível.'}
       
-      FAQ (Perguntas Frequentes):
+      === FAQ (Perguntas Frequentes) ===
       ${congress.faq?.map(f => `P: ${f.question}\nR: ${f.answer}`).join('\n') || 'Nenhum FAQ disponível.'}
       
-      Links:
+      === LINKS ÚTEIS ===
       - Submissão: ${congress.submissionUrl || 'Não disponível'}
       - Edital Capítulo de Livro: ${congress.bookChapterEditalUrl || 'Não disponível'}
 
       ${congress.trainingData ? `
-      INSTRUÇÕES ADICIONAIS DE TREINAMENTO:
+      === INSTRUÇÕES ADICIONAIS DE TREINAMENTO ===
       ${congress.trainingData}
       ` : ''}
 
       ${knowledgeBaseContent ? `
-      CONTEÚDO DOS ARQUIVOS DE CONHECIMENTO (Priorize estas informações):
+      === CONTEÚDO DOS ARQUIVOS DE SUPORTE (Prioridade Máxima) ===
       ${knowledgeBaseContent}
       ` : ''}
       
-      DIRETRIZES DE RESPOSTA:
-      1. Responda com base EXCLUSIVAMENTE nessas informações. Se não souber, diga que não encontrou no edital.
-      2. SOBRE DATAS E PRAZOS: Use a data de "HOJE" fornecida acima como referência. 
-         - As datas fornecidas acima já são as vigentes. NÃO mencione qual número da prorrogação (ex: "1ª prorrogação"). Apenas informe que é a data limite ou prazo.
-         - Se o prazo já passou, informe que está encerrado.
-      3. Seja conciso, direto e use Markdown.
+      ### DIRETRIZES ESTRITAS DE RESPOSTA:
+      1. Sua fonte de verdade é EXCLUSIVAMENTE o texto acima. Se a resposta não estiver no texto, diga educadamente que a informação não consta no edital/base de conhecimento.
+      2. NÃO invente datas ou regras. Use apenas o que foi fornecido.
+      3. SOBRE DATAS: As datas listadas em "Datas Importantes" são as vigentes. NÃO mencione "prorrogação", "extensão" ou números de etapas (ex: "5ª prorrogação"). Apenas forneça a data final.
+      4. SEJA DIRETO E CONCISO: Ao responder sobre prazos, sua resposta deve ser curta. NÃO explique o raciocínio temporal (ex: "Como hoje é dia X..."). Apenas informe o prazo.
+         - Exemplo Bom: "O prazo final para envio das apresentações é hoje, 19/12/2025."
+         - Exemplo Bom: "Você pode enviar até 19/12/2025."
+         - Exemplo Ruim: "Considerando que hoje é 19/12/2025 e o prazo é 19/12/2025, então o prazo é hoje."
+      5. Use formatação Markdown para facilitar a leitura.
       
-      Histórico da conversa:
+      Histórico da conversa segue abaixo.
     `;
 
-    // Convert messages to Gemini format
-    const history = messages.map((m: { role: string; content: string }) => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }],
-    }));
+    // --- Provider Implementation ---
 
-    // Generate content stream
-    const result = await model.generateContentStream({
-      contents: [{ role: 'user', parts: [{ text: systemPrompt + "\n\nResponda à última mensagem do usuário." }] }, ...history],
-    });
+    if (provider === 'openai') {
+      const openai = new OpenAI({ apiKey });
 
-    const stream = new ReadableStream({
-      async start(controller) {
-        for await (const chunk of result.stream) {
-          const chunkText = chunk.text();
-          controller.enqueue(new TextEncoder().encode(chunkText));
-        }
-        controller.close();
-      },
-    });
+      // Clean and prepare history
+      const historyTypes = messages.map((m: { role: string; content: string }) => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content,
+      }));
 
-    return new Response(stream, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
+      // To reinforce context for OpenAI, we check if we should hint the model to look at the system prompt
+      // Especially effective for long Contexts
+      const finalMessages = [
+        { role: 'system', content: systemPrompt },
+        ...historyTypes
+      ];
+
+      // Debug: Log total messages count
+      console.log(`[Chat API] Sending ${finalMessages.length} messages to OpenAI.`);
+
+      const response = await openai.chat.completions.create({
+        model: activeModelName,
+        stream: true,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        messages: finalMessages as any,
+        temperature: 0.3, // Lower temperature to be more faithful to the context
+      });
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          for await (const chunk of response) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+              controller.enqueue(new TextEncoder().encode(content));
+            }
+          }
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+
+    } else {
+      // --- Gemini Implementation (Default) ---
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: activeModelName });
+
+      // Convert messages to Gemini format
+      const history = messages.map((m: { role: string; content: string }) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }],
+      }));
+
+      // Generate content stream
+      // We prepend the system prompt as a USER message part to force attention
+      const result = await model.generateContentStream({
+        contents: [{ role: 'user', parts: [{ text: systemPrompt + "\n\nResponda à última mensagem do usuário abaixo com base no contexto acima:" }] }, ...history],
+      });
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          for await (const chunk of result.stream) {
+            const chunkText = chunk.text();
+            controller.enqueue(new TextEncoder().encode(chunkText));
+          }
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
 
   } catch (error: unknown) {
     console.error("Error in chat API:", error);
 
-    // Check for 429 Rate Limit (GoogleGenerativeAI Error)
+    // Check for 429 Rate Limit
     const err = error as { message?: string; status?: number };
 
     if (err.message?.includes('429') || err.status === 429) {
