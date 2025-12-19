@@ -166,7 +166,7 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                 </div>
 
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm ${msg.role === "user"
+                  className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm break-words ${msg.role === "user"
                     ? "bg-white text-gray-800 border border-gray-100 rounded-tr-none"
                     : "text-white rounded-tl-none"
                     }`}
@@ -176,9 +176,25 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                     <ReactMarkdown
                       components={{
                         p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                        a: ({ ...props }) => <a className="underline hover:text-blue-200" {...props} />,
+                        a: ({ ...props }) => <a className="underline hover:text-blue-200 break-all" {...props} />,
                         ul: ({ ...props }) => <ul className="list-disc pl-4 mb-2" {...props} />,
                         ol: ({ ...props }) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                        pre: ({ ...props }) => (
+                          <div className="w-full overflow-x-auto my-2 rounded-lg bg-black/20 p-2">
+                            <pre className="whitespace-pre-wrap break-all" {...props} />
+                          </div>
+                        ),
+                        code: ({ children, className, ...props }) => {
+                          // Handle inline vs block code logic if needed, but for simplicity:
+                          // If it's inside a pre, the pre handles the scroll.
+                          // If it's inline, we want it to wrap.
+                          return (
+                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            <code className={`${className} break-all whitespace-pre-wrap`} {...props}>
+                              {children}
+                            </code>
+                          );
+                        }
                       }}
                     >
                       {msg.content}

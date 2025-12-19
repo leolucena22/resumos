@@ -11,6 +11,11 @@ export const metadata = {
 
 import { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { Viewport } from 'next';
+
+export const viewport: Viewport = {
+  interactiveWidget: 'resizes-content',
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
