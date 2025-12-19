@@ -162,13 +162,13 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
     }
 
     return (
-      <div className="hidden md:block fixed bottom-8 right-8 z-50">
-        <div className="relative flex flex-col items-end">
+      <div className="hidden md:block fixed bottom-8 left-8 z-50">
+        <div className="relative flex flex-col items-start">
           {/* List of downloads */}
           <div
             className={`w-72 mb-4 p-4 bg-white rounded-lg shadow-2xl border transition-all duration-300 ease-in-out ${isOpen
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8 pointer-events-none"
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-8 pointer-events-none"
               }`}
           >
             <div className="flex justify-between items-center mb-3">
@@ -709,8 +709,8 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                   <div
                     key={index}
                     className={`group relative bg-white rounded-3xl shadow-sm overflow-hidden transition-all duration-500 border-2 hover:shadow-xl ${openIndex === index
-                        ? "shadow-2xl scale-[1.02]"
-                        : "hover:scale-[1.01]"
+                      ? "shadow-2xl scale-[1.02]"
+                      : "hover:scale-[1.01]"
                       }`}
                     style={{
                       borderColor:
@@ -745,8 +745,8 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                       <div className="flex-shrink-0 ml-4">
                         <div
                           className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${openIndex === index
-                              ? "rotate-180 shadow-lg"
-                              : "hover:shadow-md group-hover:scale-110"
+                            ? "rotate-180 shadow-lg"
+                            : "hover:shadow-md group-hover:scale-110"
                             }`}
                           style={{
                             backgroundColor:

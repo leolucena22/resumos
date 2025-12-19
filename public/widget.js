@@ -33,7 +33,7 @@
     iframe.title = 'Gemini Chat Widget';
     iframe.style.position = 'fixed';
     iframe.style.bottom = '20px';
-    iframe.style.left = '20px';
+    iframe.style.right = '20px';
     iframe.style.width = '150px'; // Increased to prevent hover clip
     iframe.style.height = '150px'; // Increased to prevent hover clip
     iframe.style.border = 'none';

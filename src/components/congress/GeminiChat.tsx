@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Sparkles, User, Loader2 } from "lucide-react";
+import { X, Send, User, Loader2, Headset } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { CongressData } from "../../../types/congress";
 
@@ -108,11 +108,11 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-40 p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in-up"
+          className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in-up"
           style={{ backgroundColor: colors.primary, color: "#fff" }}
           aria-label="Abrir chat com IA"
         >
-          <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
+          <Headset className="w-6 h-6 md:w-8 md:h-8" />
         </button>
       )}
 
@@ -120,7 +120,7 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
       {isOpen && (
         <div className={`${isEmbedded
           ? "fixed inset-0 w-full h-full bg-white flex flex-col overflow-hidden font-sans"
-          : "fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50 w-[90vw] md:w-[400px] h-[500px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-gray-200 font-sans"
+          : "fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 w-[90vw] md:w-[400px] h-[500px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-gray-200 font-sans"
           }`}>
           {/* Header */}
           <div
@@ -128,9 +128,9 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
             style={{ background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` }}
           >
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
+              <Headset className="w-5 h-5" />
               <div>
-                <h3 className="font-bold text-sm md:text-base">Assistente Virtual</h3>
+                <h3 className="font-bold text-sm md:text-base">Atendimento Virtual</h3>
                 <p className="text-xs opacity-90">Tire dúvidas sobre o edital</p>
               </div>
             </div>
@@ -146,8 +146,8 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
             {messages.length === 0 && (
               <div className="text-center text-gray-500 mt-8">
-                <Sparkles className="w-12 h-12 mx-auto mb-2 opacity-50" style={{ color: colors.primary }} />
-                <p className="text-sm">Olá! Sou a IA do congresso.</p>
+                <Headset className="w-12 h-12 mx-auto mb-2 opacity-50" style={{ color: colors.primary }} />
+                <p className="text-sm">Olá! Sou o Assistente Virtual.</p>
                 <p className="text-sm">Como posso ajudar com o edital hoje?</p>
               </div>
             )}
@@ -162,7 +162,7 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                     }`}
                   style={msg.role === "model" ? { backgroundColor: colors.primary } : {}}
                 >
-                  {msg.role === "user" ? <User className="w-5 h-5 text-gray-600" /> : <Sparkles className="w-5 h-5" />}
+                  {msg.role === "user" ? <User className="w-5 h-5 text-gray-600" /> : <Headset className="w-5 h-5" />}
                 </div>
 
                 <div
@@ -195,7 +195,7 @@ export default function GeminiChat({ congress, isEmbedded = false }: { congress:
                   className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-white"
                   style={{ backgroundColor: colors.primary }}
                 >
-                  <Sparkles className="w-5 h-5" />
+                  <Headset className="w-5 h-5" />
                 </div>
                 <div className="bg-gray-200/50 rounded-2xl rounded-tl-none px-4 py-2 flex items-center">
                   <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
