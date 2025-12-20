@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import AdminSkeletonLoader, { CongressListSkeleton } from '@/components/AdminSkeletonLoader';
 import TiptapEditor from '@/components/TiptapEditor';
 import DeadlineSection from '@/components/admin/DeadlineSection';
+import GlobalSettingsDialog from './_components/GlobalSettingsDialog';
 
 interface FAQItem {
   question: string;
@@ -79,156 +80,7 @@ interface Congress {
 type AdminTab = 'basic' | 'colors' | 'templates' | 'editalSections' | 'editalDates' | 'faq' | 'ai';
 
 
-// --- Global Settings Modal Component ---
-const GlobalSettingsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const [aiConfig, setAiConfig] = useState<{
-    provider: 'gemini' | 'openai';
-    model: string;
-    apiKeys: { gemini: string; openai: string };
-  }>({
-    provider: 'gemini',
-    model: 'gemini-2.5-flash',
-    apiKeys: { gemini: '', openai: '' }
-  });
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (isOpen) {
-      // Fetch Global Settings
-      fetch('/api/settings?key=ai_config')
-        .then(res => res.json())
-        .then(data => {
-          if (data) {
-            setAiConfig({
-              provider: data.provider || 'gemini',
-              model: data.model || 'gemini-2.5-flash',
-              apiKeys: data.apiKeys || { gemini: '', openai: '' }
-            });
-          }
-        })
-        .finally(() => setLoading(false));
-    }
-  }, [isOpen]);
-
-  const handleSave = async () => {
-    try {
-      const res = await fetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'ai_config', value: aiConfig })
-      });
-      if (!res.ok) throw new Error('Failed to save settings');
-      toast.success('Configurações globais salvas!');
-      onClose();
-    } catch {
-      toast.error('Erro ao salvar configurações.');
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto m-4">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">✕</button>
-        <h2 className="text-xl font-bold mb-4 text-gray-900">Configurações Globais de IA</h2>
-
-        {loading ? <p>Carregando...</p> : (
-          <div className="space-y-6">
-            {/* Provider Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Provedor de IA Padrão (Todos os Eventos)</label>
-              <div className="flex gap-4">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    checked={aiConfig.provider === 'gemini'}
-                    onChange={() => setAiConfig({ ...aiConfig, provider: 'gemini', model: 'gemini-2.5-flash' })}
-                    className="text-blue-600"
-                  />
-                  <span className="text-gray-900">Google Gemini</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    checked={aiConfig.provider === 'openai'}
-                    onChange={() => setAiConfig({ ...aiConfig, provider: 'openai', model: 'gpt-4o' })}
-                    className="text-blue-600"
-                  />
-                  <span className="text-gray-900">OpenAI (ChatGPT)</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Model Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Modelo</label>
-              <select
-                value={aiConfig.model}
-                onChange={(e) => setAiConfig({ ...aiConfig, model: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg bg-white text-gray-900"
-              >
-                {aiConfig.provider === 'openai' ? (
-                  <>
-                    <option value="gpt-4o">GPT-4o</option>
-                    <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                    <option value="gpt-4">GPT-4</option>
-                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                    <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
-                  </>
-                )}
-              </select>
-            </div>
-
-            {/* API Keys */}
-            <div className="space-y-4 border-t pt-4">
-              <h3 className="font-semibold text-gray-900">Chaves de API</h3>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gemini API Key
-                  {aiConfig.provider === 'gemini' && <span className="ml-2 text-xs text-green-600 font-bold">(Ativo)</span>}
-                </label>
-                <input
-                  type="password"
-                  value={aiConfig.apiKeys.gemini || ''}
-                  onChange={(e) => setAiConfig({ ...aiConfig, apiKeys: { ...aiConfig.apiKeys, gemini: e.target.value } })}
-                  className="w-full px-3 py-2 border rounded-lg disabled:bg-gray-100 text-gray-900"
-                  placeholder="AIzaSy..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  OpenAI API Key
-                  {aiConfig.provider === 'openai' && <span className="ml-2 text-xs text-green-600 font-bold">(Ativo)</span>}
-                </label>
-                <input
-                  type="password"
-                  value={aiConfig.apiKeys.openai || ''}
-                  onChange={(e) => setAiConfig({ ...aiConfig, apiKeys: { ...aiConfig.apiKeys, openai: e.target.value } })}
-                  className="w-full px-3 py-2 border rounded-lg disabled:bg-gray-100 text-gray-900"
-                  placeholder="sk-..."
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-4 gap-3">
-              <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
-              <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Salvar Configurações</button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export default function AdminPage() {
   const [showGlobalSettings, setShowGlobalSettings] = useState(false);
@@ -945,7 +797,7 @@ export default function AdminPage() {
                     <div className="space-y-8">
                       {/* Activation Section */}
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div>
                             <h3 className="text-lg font-semibold text-blue-900">Ativar Chatbot eIA</h3>
                             <p className="text-sm text-blue-700 mt-1">
@@ -966,12 +818,6 @@ export default function AdminPage() {
                             <label htmlFor="toggle-ai" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${congressInfo.isChatEnabled ? 'bg-green-500' : 'bg-gray-300'}`}></label>
                           </div>
                         </div>
-                      </div>
-
-                      {/* AI Configuration Moved to Global Settings */}
-                      {/* Only Congress-specific status remains */}
-                      <div className="text-sm text-gray-500 italic mt-4">
-                        A configuração do modelo de IA (Provedor, Chaves, Versão) agora é gerenciada globalmente através do botão &quot;Configurações Globais (IA)&quot; no topo da página.
                       </div>
 
                       {/* Training Data Section */}
@@ -1683,7 +1529,7 @@ export default function AdminPage() {
 
 
       </div>
-      <GlobalSettingsModal isOpen={showGlobalSettings} onClose={() => setShowGlobalSettings(false)} />
+      <GlobalSettingsDialog isOpen={showGlobalSettings} onClose={() => setShowGlobalSettings(false)} />
     </div>
   );
 }
