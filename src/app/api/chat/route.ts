@@ -18,11 +18,9 @@ function parseDate(dateStr: string): Date | null {
   return null;
 }
 
-function getActiveDeadlineDate(deadlines: Deadline[] | undefined): string {
-  if (!deadlines || deadlines.length === 0) return 'Não informada';
 
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
+function getActiveDeadlineInfo(deadlines: Deadline[] | undefined, referenceDate: Date): { date: string, isActive: boolean } {
+  if (!deadlines || deadlines.length === 0) return { date: 'Não informada', isActive: false };
 
   const sorted = [...deadlines].sort((a, b) => {
     const dateA = parseDate(a.date);
@@ -30,17 +28,25 @@ function getActiveDeadlineDate(deadlines: Deadline[] | undefined): string {
     if (!dateA && !dateB) return 0;
     if (!dateA) return 1;
     if (!dateB) return -1;
-    return dateA.getTime() - dateB.getTime();
+    return dateA!.getTime() - dateB!.getTime();
   });
 
   const active = sorted.find(d => {
     const date = parseDate(d.date);
-    return date && date >= now;
+    // Compare directly. date is 00:00:00 local time. referenceDate is passed as 00:00:00 local time (representing Brazil Today).
+    return date && date.getTime() >= referenceDate.getTime();
   });
 
-  const target = active || sorted[sorted.length - 1];
-  return target ? target.date : 'Não informada';
+  if (active) {
+    return { date: active.date, isActive: true };
+  } else {
+    const last = sorted[sorted.length - 1];
+    return { date: last ? last.date : 'Não informada', isActive: false };
+  }
 }
+
+
+import { getGlobalSettings } from "@/lib/data";
 
 async function fetchAndParseFile(url: string): Promise<string> {
   try {
@@ -82,9 +88,6 @@ async function fetchAndParseFile(url: string): Promise<string> {
   }
 }
 
-import { getGlobalSettings } from "@/lib/data";
-
-// ...
 
 export async function POST(req: Request) {
   try {
@@ -122,10 +125,26 @@ export async function POST(req: Request) {
       console.log(`[Chat API] Knowledge Base Content loaded: ${knowledgeBaseContent.length} chars`);
     }
 
+    const brazilDateStr = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    const brazilToday = parseDate(brazilDateStr) || new Date(); // Fallback to safe now if parsing fails, though it shouldn't for generated str
+
+    const submissionInfo = getActiveDeadlineInfo(congress.editalDates?.submissionDeadlines, brazilToday);
+    const presentationInfo = getActiveDeadlineInfo(congress.editalDates?.presentationDeadlines, brazilToday);
+    const resultsInfo = getActiveDeadlineInfo(congress.editalDates?.resultsDeadlines, brazilToday);
+
+    const formatDeadline = (info: { date: string, isActive: boolean }) => {
+      if (info.date === 'Não informada') return 'Não informada';
+      // For results, "Active" means it's in the future (Coming soon). "Not Active" means passed (Released).
+      // For submissions, "Active" means Open. "Not Active" means Closed.
+      // We will use generic status for the AI to interpret.
+      const status = info.isActive ? '(Vigente/Aberto)' : '(Encerrado/Passado)';
+      return `${info.date} ${status}`;
+    };
+
     const systemPrompt = `
       Você é um assistente virtual útil e amigável para o congresso "${congress.title}".
       
-      HOJE É: ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+      HOJE É: ${brazilDateStr}
       
       Aqui estão as informações do congresso (Sua Base de Conhecimento):
       
@@ -137,12 +156,11 @@ export async function POST(req: Request) {
       ${congress.editalDates ? `
         Abertura: ${congress.editalDates.openingDate || 'Não informada'}
         
-        Submissão:
-        Submissão: ${getActiveDeadlineDate(congress.editalDates.submissionDeadlines)}
+        Submissão: ${formatDeadline(submissionInfo)}
         
-        Apresentação: ${getActiveDeadlineDate(congress.editalDates.presentationDeadlines)}
+        Apresentação (Envio): ${formatDeadline(presentationInfo)}
         
-        Resultados: ${getActiveDeadlineDate(congress.editalDates.resultsDeadlines)}
+        Resultados (Divulgação): ${formatDeadline(resultsInfo)}
         
         Publicação: ${congress.editalDates.publicationDate || 'Não informada'}
       ` : 'Nenhuma data específica listada.'}
@@ -157,6 +175,14 @@ export async function POST(req: Request) {
       - Submissão: ${congress.submissionUrl || 'Não disponível'}
       - Edital Capítulo de Livro: ${congress.bookChapterEditalUrl || 'Não disponível'}
 
+      === MODELOS / TEMPLATES (Forneça estes links quando solicitados) ===
+      ${congress.templateUrls ? `
+        ${congress.templateUrls.resumoExpandidoComId ? `- Resumo Expandido (Com Identificação): ${congress.templateUrls.resumoExpandidoComId}` : ''}
+        ${congress.templateUrls.resumoExpandidoSemId ? `- Resumo Expandido (Sem Identificação): ${congress.templateUrls.resumoExpandidoSemId}` : ''}
+        ${congress.templateUrls.apresentacaoOral ? `- Modelo de Apresentação Oral: ${congress.templateUrls.apresentacaoOral}` : ''}
+        ${congress.templateUrls.eBanner ? `- Modelo de E-Banner: ${congress.templateUrls.eBanner}` : ''}
+      ` : 'Nenhum modelo disponível.'}
+
       ${congress.trainingData ? `
       === INSTRUÇÕES ADICIONAIS DE TREINAMENTO ===
       ${congress.trainingData}
@@ -170,12 +196,12 @@ export async function POST(req: Request) {
       ### DIRETRIZES ESTRITAS DE RESPOSTA:
       1. Sua fonte de verdade é EXCLUSIVAMENTE o texto acima. Se a resposta não estiver no texto, diga educadamente que a informação não consta no edital/base de conhecimento.
       2. NÃO invente datas ou regras. Use apenas o que foi fornecido.
-      3. SOBRE DATAS: As datas listadas em "Datas Importantes" são as vigentes. NÃO mencione "prorrogação", "extensão" ou números de etapas (ex: "5ª prorrogação"). Apenas forneça a data final.
+      3. SOBRE DATAS: As datas listadas em "Datas Importantes" são as vigentes e calculadas com base no dia de hoje (${brazilDateStr}). NÃO mencione "prorrogação", "extensão" ou números de etapas (ex: "5ª prorrogação"). Apenas forneça a data final listada acima.
       4. SEJA AMIGÁVEL E ÚTIL: Ao responder, use um tom conversacional e acolhedor. Você pode usar emojis ocasionalmente para tornar a resposta mais leve (ex: 😊, 📅, ✨).
-5. Mantenha a precisão das datas e regras, mas apresente-as de forma cordial.
-   - Exemplo Bom: "O prazo final para envio das apresentações é hoje, 19/12/2025! Não deixe para a última hora. 😊"
-   - Exemplo Bom: "Lembre-se que você pode enviar até 19/12/2025. Se precisar de ajuda, estou aqui!"
-6. Use formatação Markdown para facilitar a leitura.
+      5. Mantenha a precisão das datas e regras, mas apresente-as de forma cordial.
+         - Exemplo Bom: "O prazo final para envio das apresentações é hoje, ${brazilDateStr}! Não deixe para a última hora. 😊"
+         - Exemplo Bom: "Lembre-se que você pode enviar até [Data]. Se precisar de ajuda, estou aqui!"
+      6. Use formatação Markdown para facilitar a leitura.
       
       Histórico da conversa segue abaixo.
     `;
