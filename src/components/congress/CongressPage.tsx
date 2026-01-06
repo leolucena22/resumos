@@ -526,6 +526,75 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                 ))}
               </div>
 
+              {/* Template Download Section */}
+              <Section className="py-20 md:py-32 px-4">
+                <div className="max-w-7xl mx-auto">
+                  <div className="text-center mb-16">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-8 relative group">
+                      <div
+                        className="absolute inset-0 rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-300"
+                        style={{ backgroundColor: colors.primary }}
+                      ></div>
+                      <Download
+                        className="w-10 h-10 relative z-10"
+                        style={{ color: colors.primary }}
+                      />
+                    </div>
+                    <h2
+                      className="text-4xl md:text-6xl font-bold mb-8"
+                      style={{ color: colors.text }}
+                    >
+                      Modelos para Submissão
+                    </h2>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                      Baixe os modelos oficiais para a submissão de seus trabalhos.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-items-center">
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="group flex flex-col items-center justify-center p-8 rounded-2xl text-center transition-all duration-300 transform hover:scale-105 shadow-lg"
+                      style={{
+                        backgroundColor: colors.accent,
+                        color: getContrastingTextColor(colors.accent),
+                      }}
+                    >
+                      <Download className="w-16 h-16 mb-4 group-hover:animate-bounce" />
+                      <span className="text-xl font-semibold">
+                        Resumo Simples - Exemplo
+                      </span>
+                      <span className="text-sm opacity-80 mt-2">
+                        Clique para visualizar
+                      </span>
+                    </button>
+                    {templates.map(({ key, label }) => {
+                      const url = templateUrls?.[key];
+                      if (!url) return null;
+
+                      return (
+                        <a
+                          key={key}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex flex-col items-center justify-center p-8 rounded-2xl text-center transition-all duration-300 transform hover:scale-105 shadow-lg"
+                          style={{
+                            backgroundColor: colors.accent,
+                            color: getContrastingTextColor(colors.accent),
+                          }}
+                        >
+                          <Download className="w-16 h-16 mb-4 group-hover:animate-bounce" />
+                          <span className="text-xl font-semibold">{label}</span>
+                          <span className="text-sm opacity-80 mt-2">
+                            Clique para baixar
+                          </span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </Section>
+
               {/* --- New Submission Button --- */}
               {submissionUrl && (
                 <div className="text-center mt-16">
@@ -540,75 +609,6 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
             </div>
           </div>
         )}
-
-        {/* Template Download Section */}
-        <Section className="py-20 md:py-32 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-8 relative group">
-                <div
-                  className="absolute inset-0 rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-300"
-                  style={{ backgroundColor: colors.primary }}
-                ></div>
-                <Download
-                  className="w-10 h-10 relative z-10"
-                  style={{ color: colors.primary }}
-                />
-              </div>
-              <h2
-                className="text-4xl md:text-6xl font-bold mb-8"
-                style={{ color: colors.text }}
-              >
-                Modelos para Submissão
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Baixe os modelos oficiais para a submissão de seus trabalhos.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-items-center">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="group flex flex-col items-center justify-center p-8 rounded-2xl text-center transition-all duration-300 transform hover:scale-105 shadow-lg"
-                style={{
-                  backgroundColor: colors.accent,
-                  color: getContrastingTextColor(colors.accent),
-                }}
-              >
-                <Download className="w-16 h-16 mb-4 group-hover:animate-bounce" />
-                <span className="text-xl font-semibold">
-                  Resumo Simples - Exemplo
-                </span>
-                <span className="text-sm opacity-80 mt-2">
-                  Clique para visualizar
-                </span>
-              </button>
-              {templates.map(({ key, label }) => {
-                const url = templateUrls?.[key];
-                if (!url) return null;
-
-                return (
-                  <a
-                    key={key}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center justify-center p-8 rounded-2xl text-center transition-all duration-300 transform hover:scale-105 shadow-lg"
-                    style={{
-                      backgroundColor: colors.accent,
-                      color: getContrastingTextColor(colors.accent),
-                    }}
-                  >
-                    <Download className="w-16 h-16 mb-4 group-hover:animate-bounce" />
-                    <span className="text-xl font-semibold">{label}</span>
-                    <span className="text-sm opacity-80 mt-2">
-                      Clique para baixar
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </Section>
 
         {/* Book Chapter Edital Section */}
         {bookChapterEditalUrl && (
