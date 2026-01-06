@@ -383,7 +383,7 @@ export default function CongressPage({ congress }: { congress: CongressData }) {
                 <div className="flex items-center gap-3">
                   <Users className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
                   <span className="text-white font-semibold text-lg">
-                    Até 5 Autores
+                    Até {(congress as CongressData & { maxAuthors?: number }).maxAuthors || 5} Autores
                   </span>
                 </div>
               </div>

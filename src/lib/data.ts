@@ -21,6 +21,8 @@ interface RawCongress extends Congress {
     apiKeys?: { gemini?: string; openai?: string; };
     model?: string;
   };
+  max_authors?: number;
+  maxAuthors?: number;
 }
 
 export async function getCongresses(): Promise<Congress[]> {
@@ -61,6 +63,11 @@ export async function getCongresses(): Promise<Congress[]> {
       delete mappedCongress.ai_config;
     }
 
+    if (mappedCongress.max_authors !== undefined) {
+      mappedCongress.maxAuthors = mappedCongress.max_authors;
+      delete mappedCongress.max_authors;
+    }
+
     return mappedCongress as Congress;
   });
 }
@@ -91,6 +98,8 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
       apiKeys?: { gemini?: string; openai?: string; };
       model?: string;
     };
+    max_authors?: number;
+    maxAuthors?: number;
   };
 
   if (congressData) {
@@ -117,6 +126,11 @@ export async function getCongress(slug: string): Promise<CongressData | null> {
     if (congressData.ai_config !== undefined) {
       congressData.aiConfig = congressData.ai_config;
       delete congressData.ai_config;
+    }
+
+    if (congressData.max_authors !== undefined) {
+      congressData.maxAuthors = congressData.max_authors;
+      delete congressData.max_authors;
     }
   }
 
@@ -149,6 +163,8 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
       apiKeys?: { gemini?: string; openai?: string; };
       model?: string;
     };
+    max_authors?: number;
+    maxAuthors?: number;
   };
 
   if (congressData) {
@@ -176,6 +192,11 @@ export async function getCongressById(id: string): Promise<CongressData | null> 
       congressData.aiConfig = congressData.ai_config;
       delete congressData.ai_config;
     }
+
+    if (congressData.max_authors !== undefined) {
+      congressData.maxAuthors = congressData.max_authors;
+      delete congressData.max_authors;
+    }
   }
 
   return congressData;
@@ -189,6 +210,8 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     training_data?: string;
     training_file_urls?: string[];
     ai_config?: unknown;
+    max_authors?: number;
+    maxAuthors?: number;
   } = { ...congress };
 
   if (insertData.bookChapterEditalUrl !== undefined) {
@@ -216,6 +239,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
     delete insertData.aiConfig;
   }
 
+  if (insertData.maxAuthors !== undefined) {
+    insertData.max_authors = insertData.maxAuthors;
+    delete insertData.maxAuthors;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
     .insert([insertData])
@@ -236,6 +264,8 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
       apiKeys?: { gemini?: string; openai?: string; };
       model?: string;
     };
+    max_authors?: number;
+    maxAuthors?: number;
   };
 
   if (createdData) {
@@ -258,6 +288,11 @@ export async function createCongress(congress: Partial<Congress>): Promise<Congr
       createdData.aiConfig = createdData.ai_config;
       delete createdData.ai_config;
     }
+
+    if (createdData.max_authors !== undefined) {
+      createdData.maxAuthors = createdData.max_authors;
+      delete createdData.max_authors;
+    }
   }
 
   return createdData;
@@ -271,6 +306,8 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     training_data?: string;
     training_file_urls?: string[];
     ai_config?: unknown;
+    max_authors?: number;
+    maxAuthors?: number;
   } = { ...congress };
 
   if (updateData.bookChapterEditalUrl !== undefined) {
@@ -298,6 +335,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     delete updateData.aiConfig;
   }
 
+  if (updateData.maxAuthors !== undefined) {
+    updateData.max_authors = updateData.maxAuthors;
+    delete updateData.maxAuthors;
+  }
+
   const { data, error } = await supabaseServerClient
     .from('congresses')
     .update(updateData)
@@ -319,6 +361,8 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
       apiKeys?: { gemini?: string; openai?: string };
       model?: string;
     };
+    max_authors?: number;
+    maxAuthors?: number;
   };
 
   if (updatedData) {
@@ -340,6 +384,11 @@ export async function updateCongress(id: string, congress: Partial<CongressData>
     if (updatedData.ai_config !== undefined) {
       updatedData.aiConfig = updatedData.ai_config;
       delete updatedData.ai_config;
+    }
+
+    if (updatedData.max_authors !== undefined) {
+      updatedData.maxAuthors = updatedData.max_authors;
+      delete updatedData.max_authors;
     }
   }
 

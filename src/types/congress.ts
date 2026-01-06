@@ -28,6 +28,7 @@ export interface Congress {
   isChatEnabled?: boolean;
   trainingData?: string;
   trainingFileUrls?: string[];
+  maxAuthors?: number;
   colors: {
     primary: string;
     secondary: string;
@@ -63,4 +64,10 @@ export interface Congress {
     resultsDeadlines?: Deadline[];
     publicationDate?: string;
   };
+}
+
+// Re-exporting as interface to ensure proper type recognition
+// Re-exporting as interface to ensure proper type recognition
+export interface CongressData extends Congress {
+  maxAuthors?: number;
 }

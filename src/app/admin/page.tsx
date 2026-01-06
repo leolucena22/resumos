@@ -46,6 +46,7 @@ interface Congress {
     background: string;
     text: string;
   };
+  maxAuthors?: number;
   aiConfig?: {
     provider: 'gemini' | 'openai';
     apiKeys?: {
@@ -281,6 +282,8 @@ export default function AdminPage() {
       submissionUrl: '',
 
       bookChapterEditalUrl: '',
+
+      maxAuthors: 5,
 
       colors: { primary: '#0066cc', secondary: '#004499', accent: '#ff6600', background: '#f8f9fa', text: '#333333' },
 
@@ -669,7 +672,7 @@ export default function AdminPage() {
                 Configurações (IA)
               </button>
               <Link href="/admin/analytics" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center w-full md:w-auto text-sm">Métricas</Link>
-              
+
               {!isEditing && (
                 <button onClick={handleCreateNew} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full md:w-auto text-sm">+ Novo</button>
               )}
@@ -697,7 +700,7 @@ export default function AdminPage() {
 
           {/* Mobile Sidebar Toggle */}
           <div className="lg:hidden mb-3">
-             <button
+            <button
               onClick={() => setShowMobileSidebar(!showMobileSidebar)}
               className="w-full flex items-center justify-between p-3 bg-white rounded-lg shadow-sm text-gray-700 font-medium text-sm"
             >
@@ -937,41 +940,41 @@ export default function AdminPage() {
                             <Copy className="w-4 h-4" />
                           </button>
                         </div>
-                        </div>
+                      </div>
 
                       {/* Share Link Section */}
                       <div className="border-t pt-6">
                         <h3 className="text-lg font-medium text-gray-900 mb-2">Link para Compartilhar</h3>
                         <p className="text-sm text-gray-500 mb-4">
-                           Link direto para a página exclusiva do chat com IA.
+                          Link direto para a página exclusiva do chat com IA.
                         </p>
 
                         <div className="relative">
-                           <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                             <input 
-                               type="text" 
-                               readOnly 
-                               value={`${typeof window !== 'undefined' ? window.location.origin : ''}/ia/${congressInfo.slug}`}
-                               className="flex-1 bg-transparent border-none text-sm text-gray-600 focus:ring-0 outline-none w-full"
-                             />
-                             <button
-                               onClick={() => {
-                                 const link = `${window.location.origin}/ia/${congressInfo.slug}`;
-                                 navigator.clipboard.writeText(link);
-                                 toast.success('Link copiado!');
-                               }}
-                               className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                               title="Copiar Link"
-                             >
-                               <Copy className="w-5 h-5" />
-                             </button>
+                          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            <input
+                              type="text"
+                              readOnly
+                              value={`${typeof window !== 'undefined' ? window.location.origin : ''}/ia/${congressInfo.slug}`}
+                              className="flex-1 bg-transparent border-none text-sm text-gray-600 focus:ring-0 outline-none w-full"
+                            />
+                            <button
+                              onClick={() => {
+                                const link = `${window.location.origin}/ia/${congressInfo.slug}`;
+                                navigator.clipboard.writeText(link);
+                                toast.success('Link copiado!');
+                              }}
+                              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Copiar Link"
+                            >
+                              <Copy className="w-5 h-5" />
+                            </button>
                           </div>
-                      
-                           <div className="mt-2 text-xs text-right">
-                             <a href={`/ia/${congressInfo.slug}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
-                               Abrir página <LinkIcon className="w-3 h-3" />
-                             </a>
-                           </div>
+
+                          <div className="mt-2 text-xs text-right">
+                            <a href={`/ia/${congressInfo.slug}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+                              Abrir página <LinkIcon className="w-3 h-3" />
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -983,7 +986,7 @@ export default function AdminPage() {
 
                     <div className="space-y-6">
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         <div>
 
@@ -998,6 +1001,21 @@ export default function AdminPage() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Data</label>
 
                           <input type="text" value={congressInfo.date} onChange={(e) => setCongressInfo({ ...congressInfo, date: e.target.value })} disabled={!isEditing} className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50" />
+
+                        </div>
+
+                        <div>
+
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Qtd. Máx. Autores</label>
+
+                          <input
+                            type="number"
+                            value={congressInfo.maxAuthors || 5}
+                            onChange={(e) => setCongressInfo({ ...congressInfo, maxAuthors: parseInt(e.target.value) || 5 })}
+                            disabled={!isEditing}
+                            min="1"
+                            className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg disabled:bg-gray-50"
+                          />
 
                         </div>
 
