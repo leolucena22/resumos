@@ -926,11 +926,11 @@ export default function AdminPage() {
 
                         <div className="relative">
                           <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono">
-                            {`<script src="${window.location.origin}/widget.js" data-slug="${congressInfo.slug}"></script>`}
+                            {`<script src="${window.location.origin}/widget.js" data-slug="${congressInfo.slug}" async></script>`}
                           </pre>
                           <button
                             onClick={() => {
-                              const code = `<script src="${window.location.origin}/widget.js" data-slug="${congressInfo.slug}"></script>`;
+                              const code = `<script src="${window.location.origin}/widget.js" data-slug="${congressInfo.slug}" async></script>`;
                               navigator.clipboard.writeText(code);
                               toast.success('Código copiado!');
                             }}

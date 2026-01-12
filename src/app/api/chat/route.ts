@@ -89,8 +89,33 @@ async function fetchAndParseFile(url: string): Promise<string> {
 }
 
 
+import { LRUCache } from 'lru-cache';
+
+const rateLimit = new LRUCache<string, number>({
+  max: 500, // Maximum number of IPs to track
+  ttl: 60 * 1000, // 1 minute window
+});
+
 export async function POST(req: Request) {
   try {
+    // --- Rate Limiting ---
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    // Allow localhost (IPv4 and IPv6) to bypass rate limits
+    const isLocalhost = ip.includes('127.0.0.1') || ip.includes('::1') || ip === 'unknown'; // 'unknown' often happens in dev/test without proxy
+
+    if (!isLocalhost) {
+      const currentUsage = rateLimit.get(ip) || 0;
+      if (currentUsage >= 5) { // Limit: 5 requests per minute
+        console.warn(`[Rate Limit] Blocked IP: ${ip}`);
+        return new Response(
+          "⚠️ **Muitas requisições**\n\nVocê atingiu o limite de mensagens por minuto. Por favor, aguarde um momento.",
+          { status: 429 }
+        );
+      }
+      rateLimit.set(ip, currentUsage + 1);
+    }
+    // ---------------------
+
     const { messages, context } = await req.json();
     const congress = context as CongressData;
 
