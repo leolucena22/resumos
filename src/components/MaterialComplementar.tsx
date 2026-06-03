@@ -22,7 +22,7 @@ export default function MaterialComplementar() {
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Minicurso - Como produzir um resumo científico</h3>
             <div className="aspect-w-16 aspect-h-9">
               <iframe
-                src="https://player.vimeo.com/video/798450790?h=6b7db2b8e8"
+                src="https://player.vimeo.com/video/950302815?h=459875a1b8"
                 width="100%"
                 height="360"
                 frameBorder="0"
